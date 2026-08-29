@@ -1,80 +1,225 @@
-# Typevet
+# TypeVet
 
-Extensão para consultar e copiar suas descrições personalizadas sem sair da página em uso.
+A Google Chrome extension designed to streamline the use of standardized descriptions while writing reports.
 
-English instructions: see `README.en.md`.
+**TypeVet** allows users to organize reusable texts by categories and organs, search descriptions, mark content as favorite, and quickly copy it for use in web-based clinical systems.
 
-## O que já funciona
+The extension also provides a floating panel directly on the page being used by the professional, reducing the need to switch between tabs or external documents.
 
-- Ativação somente após o usuário clicar no ícone do typevet na guia atual;
-- Uso de `activeTab`, sem permissão permanente para todos os sites;
-- Botão flutuante arrastável na página ativada, com a posição salva;
-- Controle para desativar ou reativar o botão flutuante quando desejado;
-- Interface bilíngue em português e inglês, com idioma sincronizado entre painel e gerenciador;
-- Acesso **Biblioteca** como primeira opção do painel, reunindo todos os órgãos e descrições;
-- Navegação por mouse em categorias, órgãos e descrições;
-- Pesquisa instantânea dentro de cada órgão pelo título ou conteúdo da descrição;
-- Cadastro rápido de uma nova descrição diretamente pelo painel flutuante;
-- Pré-visualização antes da cópia;
-- Cópia com um clique;
-- Favoritos e itens usados recentemente;
-- Cadastro, edição e exclusão de categorias, órgãos e descrições;
-- Busca na tela de gerenciamento;
-- Importação e exportação de backup em JSON;
-- Contadores de descrições, categorias, favoritos e cópias;
-- Dados armazenados localmente no navegador, sem servidor externo.
+> **Disclaimer:** TypeVet is an independent tool. 
 
-As únicas categorias iniciais são **Abdome**, **Cervical** e **Ocular**. O usuário pode criar quantas categorias e órgãos quiser. Cada órgão agrupa diversas descrições — por exemplo: `Abdome → Fígado → Fígado normal / Hepatomegalia`.
+## Features
 
-Os textos incluídos na primeira instalação são apenas exemplos identificados na interface. Substitua-os pelos modelos validados pelo serviço antes do uso profissional.
+- Organization of descriptions by **categories** and **organs**
+- Creation of new descriptions
+- Editing and management of stored texts
+- Search by title and content
+- Favorite descriptions
+- Recently used descriptions
+- Quick copy to clipboard
+- Floating panel available directly on compatible web pages
+- Movable floating button
+- Persistent floating button position
+- Local import and management of descriptions
+- Local storage using the Chrome Storage API
+- Interface isolation through Shadow DOM
 
-## Instalação para desenvolvimento
+## How It Works
 
-1. Descompacte o arquivo do projeto.
-2. Abra `chrome://extensions` no Chrome.
-3. Ative **Modo do desenvolvedor** no canto superior direito.
-4. Clique em **Carregar sem compactação**.
-5. Selecione a pasta `typevet-extension` que contém o arquivo `manifest.json`.
-6. Abra uma página comum e clique no ícone do typevet na barra do Chrome. O painel será ativado e aberto nessa guia.
-
-O acesso é temporário e limitado à guia acionada. Após recarregar a página, fechar a guia ou navegar para outro site, clique novamente no ícone para reativar o typevet. Se a página for protegida pelo navegador, o gerenciador será aberto no lugar.
-
-## Uso
-
-1. Clique no ícone do typevet para ativar e abrir o painel na página atual.
-2. Arraste o botão **Descrições** para deixá-lo na posição mais confortável da tela.
-3. Clique em **Nova descrição** no rodapé do painel para cadastrar rapidamente um texto.
-4. Use o botão **PT/EN** no cabeçalho para alternar o idioma de toda a interface. Em uma instalação nova, o typevet inicia em inglês quando esse é o idioma do Chrome; nos demais casos, inicia em português.
-5. Clique em **Desativar botão** quando não quiser mantê-lo visível na página. O painel continua acessível pelo ícone do typevet.
-6. Use **Gerenciar** quando quiser criar categorias ou órgãos e fazer edições mais completas.
-7. Abra **Biblioteca** para ver todos os órgãos ou entre diretamente em uma categoria; depois escolha a descrição e clique em **Copiar descrição**.
-
-O seletor de idioma traduz a interface e os exemplos iniciais. As descrições personalizadas permanecem exatamente como foram escritas; o typevet não altera nem traduz automaticamente os textos clínicos do usuário.
-
-O painel só é injetado após uma ação explícita do usuário. Ele não pode ser ativado em páginas internas do Chrome, na Chrome Web Store ou em outras telas protegidas pelo navegador.
-
-## Privacidade
-
-O typevet não faz requisições de rede e usa `chrome.storage.local`. O acesso à página é temporário, concedido por `activeTab` somente após o clique do usuário. Os dados são removidos se a extensão for desinstalada, então mantenha backups JSON. Evite armazenar nomes, documentos ou outros identificadores de pacientes nas descrições.
-
-## Estrutura
+Stored texts are organized locally in a structure similar to:
 
 ```text
-manifest.json                 Configuração Manifest V3
-background/service-worker.js Inicialização e ativação sob demanda
-content/                      Botão e painel injetados na guia ativa
-options/                      Gerenciador da biblioteca
-shared/defaults.js            Estrutura e exemplos iniciais
-shared/i18n.js                Traduções e localização dos exemplos
-_locales/                     Nome e descrição localizados no Chrome
-assets/                       Ícones da extensão
-tests/validate.mjs            Validações estáticas e de integridade
+Category
+└── Organ
+    ├── Description 1
+    ├── Description 2
+    └── Description 3
 ```
 
-## Validação local
+When a compatible page is opened, TypeVet injects a floating button into the interface.
 
-Com Node.js instalado, execute:
+From the floating panel, the user can:
 
-```bash
-npm test
+1. browse categories;
+2. select an organ;
+3. search for a description;
+4. preview the text;
+5. copy it to the clipboard;
+6. create new descriptions without leaving the current page.
+
+## Technologies
+
+- JavaScript
+- HTML
+- CSS
+- Chrome Extensions API
+- Manifest V3
+- Chrome Storage API
+- Clipboard API
+- Shadow DOM
+
+The main interface does not rely on external frameworks or libraries.
+
+## Development Installation
+
+### 1. Download the project
+
+Clone this repository or download the source files.
+
+### 2. Open the Chrome Extensions page
+
+Enter the following address in Chrome:
+
+```text
+chrome://extensions
 ```
+
+### 3. Enable Developer Mode
+
+Enable **Developer mode** in the top-right corner.
+
+### 4. Load the extension
+
+Click **Load unpacked** and select the project root directory, which is the folder containing:
+
+```text
+manifest.json
+```
+
+### 5. Reload the target page
+
+After installing or updating the extension, reload the web page where you want to use TypeVet.
+
+## Updating the Extension During Development
+
+Whenever you modify the extension files:
+
+1. open `chrome://extensions`;
+2. find TypeVet;
+3. click **Reload**;
+4. return to the page where you are testing it;
+5. press `F5`.
+
+Content scripts that are already loaded on a page may continue using an older version of the code until the page itself is reloaded.
+
+## Data and Privacy
+
+TypeVet stores descriptions and settings locally using `chrome.storage.local`.
+
+The extension is not designed to send stored descriptions to a TypeVet-owned external server.
+
+Do not commit the following content to the repository:
+
+- patient information;
+- owner information;
+- credentials;
+- authentication tokens;
+- cookies;
+- private clinic information;
+- exports containing sensitive data;
+- screenshots containing real data unless properly anonymized.
+
+## Permissions
+
+### `storage`
+
+Used to store local data such as:
+
+- categories;
+- organs;
+- descriptions;
+- favorites;
+- settings;
+- floating button position;
+- usage information required by the interface.
+
+### `clipboardWrite`
+
+Used to copy a selected description to the clipboard when requested by the user.
+
+### Host permission
+
+Used to allow the content script to run on compatible pages and provide the floating TypeVet interface while the user is working.
+
+## Project Structure
+
+The exact structure may change between versions, but the main components are organized similarly to:
+
+```text
+TypeVet/
+│
+├── manifest.json
+├── README.md
+├── content/
+│   ├── content.js
+│   └── content.css
+├── options/
+│   └── ...
+├── icons/
+│   └── ...
+├── _locales/
+│   └── ...
+└── ...
+```
+
+### `manifest.json`
+
+Defines the extension configuration, permissions, scripts, resources, and metadata used by Chrome.
+
+### `content/content.js`
+
+Responsible for the interface injected into the page, including:
+
+- the floating button;
+- the descriptions panel;
+- navigation between categories and organs;
+- search;
+- copying descriptions;
+- favorites;
+- quick description creation;
+- communication with local storage.
+
+### `content/content.css`
+
+Contains the styles used by the interface displayed directly over the host page.
+
+### Management Interface
+
+Responsible for managing stored categories, organs, and descriptions.
+
+## Project Status
+
+TypeVet is currently under development.
+
+The interface, data model, permissions, and compatibility behavior may change before a stable release.
+
+## Purpose
+
+The goal of TypeVet is to reduce repetitive work related to writing standardized descriptions during veterinary ultrasound workflows by keeping reusable text organized and quickly accessible from within the browser.
+
+## Contributing
+
+For larger changes, it is recommended to create a separate branch and test the extension before merging changes into the main branch.
+
+Example branch names:
+
+```text
+feature/improved-search
+fix/modal-focus
+feature/import
+```
+
+Example commit messages:
+
+```text
+feat: add quick description creation
+fix: prevent modal focus conflicts
+fix: improve clipboard fallback
+docs: update project README
+```
+
+## License
+
+No license has been defined for this project yet.
+
+If the repository is made publicly available as open-source software, a license should be explicitly selected before allowing redistribution or modification by third parties.
