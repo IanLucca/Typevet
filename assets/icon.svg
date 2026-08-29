@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Ícone typevet">
+  <defs>
+    <linearGradient id="bg" x1="20" y1="16" x2="108" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20A4B8"/>
+      <stop offset="1" stop-color="#165D78"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="116" height="116" rx="34" fill="url(#bg)"/>
+  <path d="M34 72c9-24 19-36 30-36s21 12 30 36" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+  <path d="M43 75c6-15 13-23 21-23s15 8 21 23" fill="none" stroke="#BFF5EF" stroke-width="7" stroke-linecap="round"/>
+  <path d="M52 78c4-8 8-12 12-12s8 4 12 12" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <rect x="31" y="85" width="66" height="9" rx="4.5" fill="#fff" opacity=".96"/>
+</svg>

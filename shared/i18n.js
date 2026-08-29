@@ -1,0 +1,493 @@
+(function initializeTypevetI18n(globalScope) {
+  "use strict";
+
+  const DEFAULT_LANGUAGE = "pt-BR";
+  const translations = {
+    "pt-BR": {
+      "common.descriptions": "Descrições",
+      "common.organs": "Órgãos",
+      "common.categories": "Categorias",
+      "common.copies": "Cópias realizadas",
+      "common.category": "Categoria",
+      "common.organ": "Órgão",
+      "common.description": "Descrição",
+      "common.noCategory": "Sem categoria",
+      "common.noOrgan": "Sem órgão",
+      "common.library": "Biblioteca",
+      "common.favorites": "Favoritas",
+      "common.favorite": "Favorito",
+      "common.sample": "Exemplo",
+      "common.import": "Importar",
+      "common.exportBackup": "Exportar backup",
+      "common.manage": "Gerenciar",
+      "common.cancel": "Cancelar",
+      "common.close": "Fechar",
+      "common.back": "Voltar",
+      "common.copy": "Copiar",
+      "common.edit": "Editar",
+      "common.delete": "Excluir",
+      "common.newDescription": "Nova descrição",
+      "common.newOrgan": "Novo órgão",
+      "common.newCategory": "Nova categoria",
+      "common.editDescription": "Editar descrição",
+      "common.editOrgan": "Editar órgão",
+      "common.editCategory": "Editar categoria",
+      "common.deleteOrgan": "Excluir órgão",
+      "common.deleteCategory": "Excluir categoria",
+      "common.saveDescription": "Salvar descrição",
+      "common.saveOrgan": "Salvar órgão",
+      "common.saveCategory": "Salvar categoria",
+      "common.addFavorites": "Adicionar aos favoritos",
+
+      "count.organ.one": "{count} órgão",
+      "count.organ.other": "{count} órgãos",
+      "count.description.one": "{count} descrição",
+      "count.description.other": "{count} descrições",
+      "count.text.one": "{count} texto",
+      "count.text.other": "{count} textos",
+      "count.organAvailable.one": "{count} órgão disponível",
+      "count.organAvailable.other": "{count} órgãos disponíveis",
+      "count.descriptionAvailable.one": "{count} descrição disponível",
+      "count.descriptionAvailable.other": "{count} descrições disponíveis",
+
+      "panel.fabLabel": "Descrições",
+      "panel.fabTitle": "Clique para abrir ou arraste para mover",
+      "panel.fabAria": "Abrir descrições de ultrassonografia; arraste para mover",
+      "panel.dialogAria": "Descrições de ultrassonografia",
+      "panel.close": "Fechar painel",
+      "panel.quickAccess": "Acesso rápido",
+      "panel.shortcuts": "Seus atalhos",
+      "panel.createShortcuts": "Crie seus atalhos",
+      "panel.markFavorites": "Marque descrições como favoritas no gerenciador.",
+      "panel.mouseNavigation": "Navegar com o mouse",
+      "panel.chooseCategory": "Escolha uma opção",
+      "panel.noTextRegistered": "Nenhum texto cadastrado",
+      "panel.categoryNotFound": "Categoria não encontrada.",
+      "panel.organNotFound": "Órgão não encontrado.",
+      "panel.descriptionNotFound": "Descrição não encontrada.",
+      "panel.noOrganHere": "Nenhum órgão aqui",
+      "panel.addFirstOrgan": "Adicione o primeiro órgão desta categoria no gerenciador.",
+      "panel.noOrganInLibrary": "Nenhum órgão na biblioteca",
+      "panel.addFirstOrganLibrary": "Crie o primeiro órgão no gerenciador para começar.",
+      "panel.openManager": "Abrir gerenciador",
+      "panel.addDescriptionTo": "Adicionar descrição a {organ}",
+      "panel.searchPlaceholder": "Pesquisar em {organ}",
+      "panel.searchAria": "Pesquisar descrições de {organ}",
+      "panel.clearSearch": "Limpar pesquisa",
+      "panel.searchScope": "Busca no título e no texto",
+      "panel.searchNoResult": "Nenhuma descrição encontrada",
+      "panel.searchTryAgain": "Tente outra palavra ou limpe a pesquisa.",
+      "panel.noDescriptionHere": "Nenhuma descrição aqui",
+      "panel.addFirstWithoutLeaving": "Cadastre o primeiro texto sem sair desta página.",
+      "panel.addDescription": "Adicionar descrição",
+      "panel.createOrganFirst": "Crie um órgão primeiro",
+      "panel.descriptionNeedsOrgan": "Uma descrição sempre precisa ficar dentro de um órgão.",
+      "panel.quickAddIntro": "Salve um novo texto sem sair da página em que está trabalhando.",
+      "panel.organField": "Órgão",
+      "panel.titleField": "Título",
+      "panel.descriptionTextField": "Texto da descrição",
+      "panel.titlePlaceholder": "Ex.: Hepatomegalia",
+      "panel.descriptionPlaceholder": "Digite ou cole aqui o texto que será copiado...",
+      "panel.favoriteHelp": "Exibir no acesso rápido do painel",
+      "panel.sampleEdit": "Exemplo para editar",
+      "panel.sampleNotice": "Este é um texto de exemplo. Clique para editar antes de usar.",
+      "panel.viewText": "Ver texto",
+      "panel.copyDescription": "Copiar descrição",
+      "panel.editInManager": "Editar esta descrição no gerenciador",
+      "panel.goHome": "Voltar ao início",
+      "panel.copyTitle": "Copiar {title}",
+      "panel.favoriteAdd": "Adicionar aos favoritos",
+      "panel.favoriteRemove": "Remover dos favoritos",
+      "panel.searchFiltered": "{visible} de {total} {label}",
+      "panel.hideFab": "Desativar botão",
+      "panel.showFab": "Ativar botão",
+      "panel.hideFabTitle": "Desativar o botão flutuante",
+      "panel.showFabTitle": "Ativar novamente o botão flutuante",
+      "panel.languageToEnglish": "Mudar interface para inglês",
+      "panel.languageToPortuguese": "Change interface to Portuguese",
+
+      "toast.descriptionCreated": "Descrição criada",
+      "toast.descriptionSaveFailed": "Não foi possível salvar a descrição",
+      "toast.descriptionRequired": "Preencha o órgão, o título e a descrição",
+      "toast.copied": "{title} copiado",
+      "toast.copyPageFailed": "Não foi possível copiar nesta página",
+      "toast.favoriteAdded": "Adicionado aos favoritos",
+      "toast.favoriteRemoved": "Removido dos favoritos",
+      "toast.positionSaveFailed": "Não foi possível salvar a posição do botão",
+      "toast.fabHidden": "Botão desativado. Use o ícone do typevet no Chrome para abrir o painel.",
+      "toast.fabShown": "Botão flutuante ativado",
+      "toast.languagePortuguese": "Interface alterada para português",
+      "toast.languageEnglish": "Interface changed to English",
+
+      "options.pageTitle": "Gerenciar descrições — typevet",
+      "options.brandHome": "typevet — início",
+      "options.brandSubtitle": "Biblioteca de descrições",
+      "options.organization": "Organização",
+      "options.filterCategory": "Filtrar por categoria",
+      "options.localNote": "Os textos ficam armazenados neste navegador. Exporte um backup regularmente.",
+      "options.manager": "Gerenciador",
+      "options.heroTitle": "Suas descrições, prontas para usar.",
+      "options.heroText": "Cadastre os textos uma vez e acesse todos pelo botão flutuante enquanto navega.",
+      "options.librarySummary": "Resumo da biblioteca",
+      "options.manageTexts": "Gerencie os textos disponíveis no painel flutuante.",
+      "options.searchPlaceholder": "Buscar no gerenciador",
+      "options.library": "Biblioteca",
+      "options.variationName": "Nome da variação ou achado",
+      "options.variationPlaceholder": "Ex.: Fígado normal ou Hepatomegalia",
+      "options.standardDescription": "Descrição padronizada",
+      "options.characters": "caracteres",
+      "options.favoriteHelp": "Exibe esta descrição no acesso rápido.",
+      "options.grouping": "Agrupamento",
+      "options.organName": "Nome do órgão ou estrutura",
+      "options.organPlaceholder": "Ex.: Fígado",
+      "options.categoryName": "Nome da categoria",
+      "options.categoryPlaceholder": "Ex.: Abdome",
+      "options.color": "Cor",
+      "options.language": "Idioma",
+      "options.libraryByOrgans": "Biblioteca por órgãos",
+      "options.favoriteDescriptions": "Descrições favoritas",
+      "options.addText": "Adicionar texto",
+      "options.noDescriptionInOrgan": "Nenhuma descrição neste órgão. Use “Adicionar texto”.",
+      "options.noResults": "Nenhum órgão ou texto encontrado",
+      "options.emptyLibrary": "Sua biblioteca está vazia",
+      "options.changeFilter": "Altere o filtro ou crie um novo órgão.",
+      "options.createFirstOrgan": "Crie o primeiro órgão para começar.",
+      "options.searchSummary": "{organs} e {descriptions} para “{query}”.",
+      "options.viewSummary": "{organs} organizados nesta visualização.",
+      "options.editNamed": "Editar {name}",
+      "options.copyNamed": "Copiar {name}",
+      "options.deleteNamed": "Excluir {name}",
+
+      "options.errorCreateOrganFirst": "Crie um órgão antes da primeira descrição",
+      "options.errorCreateCategoryFirst": "Crie uma categoria antes do primeiro órgão",
+      "options.errorDescriptionRequired": "Preencha o nome, o órgão e a descrição",
+      "options.errorOrganRequired": "Informe o nome e a categoria do órgão",
+      "options.errorOrganDuplicate": "Esse órgão já existe na categoria selecionada",
+      "options.errorCategoryRequired": "Informe o nome da categoria",
+      "options.errorCategoryDuplicate": "Já existe uma categoria com esse nome",
+      "options.descriptionUpdated": "Descrição atualizada",
+      "options.descriptionCreated": "Descrição criada",
+      "options.organUpdated": "Órgão atualizado",
+      "options.organCreated": "Órgão criado",
+      "options.categoryUpdated": "Categoria atualizada",
+      "options.categoryCreated": "Categoria criada",
+      "options.confirmDeleteDescription": "Excluir a descrição “{name}”?",
+      "options.confirmDeleteOrgan": "Excluir o órgão “{name}”?",
+      "options.confirmDeleteCategory": "Excluir a categoria “{name}”?",
+      "options.descriptionDeleted": "Descrição excluída",
+      "options.organDeleted": "Órgão excluído",
+      "options.categoryDeleted": "Categoria excluída",
+      "options.removeDescriptionsFirst": "Exclua ou mova {count} {label} antes",
+      "options.removeOrgansFirst": "Mova ou exclua {count} {label} antes",
+      "options.copyFailed": "Não foi possível copiar o texto",
+      "options.invalidBackup": "Formato de backup inválido",
+      "options.backupLimit": "O backup ultrapassa o limite permitido",
+      "options.invalidCategories": "Há categorias inválidas ou duplicadas",
+      "options.invalidOrgans": "Há órgãos inválidos, duplicados ou sem categoria",
+      "options.invalidDescriptions": "Há descrições inválidas, duplicadas ou sem órgão",
+      "options.backupExported": "Backup exportado",
+      "options.fileTooLarge": "O arquivo é maior que 10 MB",
+      "options.confirmImport": "Importar {organs} e {descriptions}? A biblioteca atual será substituída.",
+      "options.backupImported": "Backup importado com sucesso",
+      "options.backupImportFailed": "Não foi possível importar o backup",
+      "options.loadFailed": "Não foi possível carregar a biblioteca",
+
+      "sample.exampleText": "Exemplo inicial: substitua este texto pela descrição padronizada de {subject} utilizada pelo seu serviço."
+    },
+    en: {
+      "common.descriptions": "Descriptions",
+      "common.organs": "Organs",
+      "common.categories": "Categories",
+      "common.copies": "Copies made",
+      "common.category": "Category",
+      "common.organ": "Organ",
+      "common.description": "Description",
+      "common.noCategory": "No category",
+      "common.noOrgan": "No organ",
+      "common.library": "Library",
+      "common.favorites": "Favorites",
+      "common.favorite": "Favorite",
+      "common.sample": "Sample",
+      "common.import": "Import",
+      "common.exportBackup": "Export backup",
+      "common.manage": "Manage",
+      "common.cancel": "Cancel",
+      "common.close": "Close",
+      "common.back": "Back",
+      "common.copy": "Copy",
+      "common.edit": "Edit",
+      "common.delete": "Delete",
+      "common.newDescription": "New description",
+      "common.newOrgan": "New organ",
+      "common.newCategory": "New category",
+      "common.editDescription": "Edit description",
+      "common.editOrgan": "Edit organ",
+      "common.editCategory": "Edit category",
+      "common.deleteOrgan": "Delete organ",
+      "common.deleteCategory": "Delete category",
+      "common.saveDescription": "Save description",
+      "common.saveOrgan": "Save organ",
+      "common.saveCategory": "Save category",
+      "common.addFavorites": "Add to favorites",
+
+      "count.organ.one": "{count} organ",
+      "count.organ.other": "{count} organs",
+      "count.description.one": "{count} description",
+      "count.description.other": "{count} descriptions",
+      "count.text.one": "{count} text",
+      "count.text.other": "{count} texts",
+      "count.organAvailable.one": "{count} organ available",
+      "count.organAvailable.other": "{count} organs available",
+      "count.descriptionAvailable.one": "{count} description available",
+      "count.descriptionAvailable.other": "{count} descriptions available",
+
+      "panel.fabLabel": "Descriptions",
+      "panel.fabTitle": "Click to open or drag to move",
+      "panel.fabAria": "Open ultrasound descriptions; drag to move",
+      "panel.dialogAria": "Ultrasound descriptions",
+      "panel.close": "Close panel",
+      "panel.quickAccess": "Quick access",
+      "panel.shortcuts": "Your shortcuts",
+      "panel.createShortcuts": "Create your shortcuts",
+      "panel.markFavorites": "Mark descriptions as favorites in the manager.",
+      "panel.mouseNavigation": "Browse with the mouse",
+      "panel.chooseCategory": "Choose an option",
+      "panel.noTextRegistered": "No text registered",
+      "panel.categoryNotFound": "Category not found.",
+      "panel.organNotFound": "Organ not found.",
+      "panel.descriptionNotFound": "Description not found.",
+      "panel.noOrganHere": "No organs here",
+      "panel.addFirstOrgan": "Add the first organ in this category using the manager.",
+      "panel.noOrganInLibrary": "No organs in the library",
+      "panel.addFirstOrganLibrary": "Create the first organ in the manager to get started.",
+      "panel.openManager": "Open manager",
+      "panel.addDescriptionTo": "Add description to {organ}",
+      "panel.searchPlaceholder": "Search in {organ}",
+      "panel.searchAria": "Search {organ} descriptions",
+      "panel.clearSearch": "Clear search",
+      "panel.searchScope": "Searches titles and text",
+      "panel.searchNoResult": "No descriptions found",
+      "panel.searchTryAgain": "Try another word or clear the search.",
+      "panel.noDescriptionHere": "No descriptions here",
+      "panel.addFirstWithoutLeaving": "Add the first text without leaving this page.",
+      "panel.addDescription": "Add description",
+      "panel.createOrganFirst": "Create an organ first",
+      "panel.descriptionNeedsOrgan": "Every description must belong to an organ.",
+      "panel.quickAddIntro": "Save a new text without leaving the page you are working on.",
+      "panel.organField": "Organ",
+      "panel.titleField": "Title",
+      "panel.descriptionTextField": "Description text",
+      "panel.titlePlaceholder": "E.g. Hepatomegaly",
+      "panel.descriptionPlaceholder": "Type or paste the text that will be copied...",
+      "panel.favoriteHelp": "Show in the panel's quick access",
+      "panel.sampleEdit": "Sample to edit",
+      "panel.sampleNotice": "This is sample text. Click to edit it before use.",
+      "panel.viewText": "View text",
+      "panel.copyDescription": "Copy description",
+      "panel.editInManager": "Edit this description in the manager",
+      "panel.goHome": "Back to home",
+      "panel.copyTitle": "Copy {title}",
+      "panel.favoriteAdd": "Add to favorites",
+      "panel.favoriteRemove": "Remove from favorites",
+      "panel.searchFiltered": "{visible} of {total} {label}",
+      "panel.hideFab": "Disable button",
+      "panel.showFab": "Enable button",
+      "panel.hideFabTitle": "Disable the floating button",
+      "panel.showFabTitle": "Enable the floating button again",
+      "panel.languageToEnglish": "Mudar interface para inglês",
+      "panel.languageToPortuguese": "Change interface to Portuguese",
+
+      "toast.descriptionCreated": "Description created",
+      "toast.descriptionSaveFailed": "Could not save the description",
+      "toast.descriptionRequired": "Fill in the organ, title, and description",
+      "toast.copied": "{title} copied",
+      "toast.copyPageFailed": "Could not copy on this page",
+      "toast.favoriteAdded": "Added to favorites",
+      "toast.favoriteRemoved": "Removed from favorites",
+      "toast.positionSaveFailed": "Could not save the button position",
+      "toast.fabHidden": "Button disabled. Use the typevet icon in Chrome to open the panel.",
+      "toast.fabShown": "Floating button enabled",
+      "toast.languagePortuguese": "Interface alterada para português",
+      "toast.languageEnglish": "Interface changed to English",
+
+      "options.pageTitle": "Manage descriptions — typevet",
+      "options.brandHome": "typevet — home",
+      "options.brandSubtitle": "Description library",
+      "options.organization": "Organization",
+      "options.filterCategory": "Filter by category",
+      "options.localNote": "Texts are stored in this browser. Export a backup regularly.",
+      "options.manager": "Manager",
+      "options.heroTitle": "Your descriptions, ready to use.",
+      "options.heroText": "Save texts once and access them from the floating button while you browse.",
+      "options.librarySummary": "Library summary",
+      "options.manageTexts": "Manage the texts available in the floating panel.",
+      "options.searchPlaceholder": "Search the manager",
+      "options.library": "Library",
+      "options.variationName": "Variation or finding name",
+      "options.variationPlaceholder": "E.g. Normal liver or hepatomegaly",
+      "options.standardDescription": "Standardized description",
+      "options.characters": "characters",
+      "options.favoriteHelp": "Shows this description in quick access.",
+      "options.grouping": "Grouping",
+      "options.organName": "Organ or structure name",
+      "options.organPlaceholder": "E.g. Liver",
+      "options.categoryName": "Category name",
+      "options.categoryPlaceholder": "E.g. Abdomen",
+      "options.color": "Color",
+      "options.language": "Language",
+      "options.libraryByOrgans": "Library by organ",
+      "options.favoriteDescriptions": "Favorite descriptions",
+      "options.addText": "Add text",
+      "options.noDescriptionInOrgan": "No descriptions in this organ. Use “Add text”.",
+      "options.noResults": "No organs or texts found",
+      "options.emptyLibrary": "Your library is empty",
+      "options.changeFilter": "Change the filter or create a new organ.",
+      "options.createFirstOrgan": "Create the first organ to get started.",
+      "options.searchSummary": "{organs} and {descriptions} for “{query}”.",
+      "options.viewSummary": "{organs} organized in this view.",
+      "options.editNamed": "Edit {name}",
+      "options.copyNamed": "Copy {name}",
+      "options.deleteNamed": "Delete {name}",
+
+      "options.errorCreateOrganFirst": "Create an organ before the first description",
+      "options.errorCreateCategoryFirst": "Create a category before the first organ",
+      "options.errorDescriptionRequired": "Fill in the name, organ, and description",
+      "options.errorOrganRequired": "Enter the organ name and category",
+      "options.errorOrganDuplicate": "This organ already exists in the selected category",
+      "options.errorCategoryRequired": "Enter the category name",
+      "options.errorCategoryDuplicate": "A category with this name already exists",
+      "options.descriptionUpdated": "Description updated",
+      "options.descriptionCreated": "Description created",
+      "options.organUpdated": "Organ updated",
+      "options.organCreated": "Organ created",
+      "options.categoryUpdated": "Category updated",
+      "options.categoryCreated": "Category created",
+      "options.confirmDeleteDescription": "Delete the description “{name}”?",
+      "options.confirmDeleteOrgan": "Delete the organ “{name}”?",
+      "options.confirmDeleteCategory": "Delete the category “{name}”?",
+      "options.descriptionDeleted": "Description deleted",
+      "options.organDeleted": "Organ deleted",
+      "options.categoryDeleted": "Category deleted",
+      "options.removeDescriptionsFirst": "Delete or move {count} {label} first",
+      "options.removeOrgansFirst": "Move or delete {count} {label} first",
+      "options.copyFailed": "Could not copy the text",
+      "options.invalidBackup": "Invalid backup format",
+      "options.backupLimit": "The backup exceeds the allowed limit",
+      "options.invalidCategories": "The backup contains invalid or duplicate categories",
+      "options.invalidOrgans": "The backup contains invalid, duplicate, or uncategorized organs",
+      "options.invalidDescriptions": "The backup contains invalid, duplicate, or unassigned descriptions",
+      "options.backupExported": "Backup exported",
+      "options.fileTooLarge": "The file is larger than 10 MB",
+      "options.confirmImport": "Import {organs} and {descriptions}? The current library will be replaced.",
+      "options.backupImported": "Backup imported successfully",
+      "options.backupImportFailed": "Could not import the backup",
+      "options.loadFailed": "Could not load the library",
+
+      "sample.exampleText": "Initial sample: replace this text with the standardized {subject} description used by your practice."
+    }
+  };
+
+  const categoryNames = {
+    abdome: { "pt-BR": "Abdome", en: "Abdomen" },
+    cervical: { "pt-BR": "Cervical", en: "Cervical" },
+    ocular: { "pt-BR": "Ocular", en: "Ocular" }
+  };
+
+  const organNames = {
+    figado: { "pt-BR": "Fígado", en: "Liver" },
+    "vesicula-biliar": { "pt-BR": "Vesícula biliar", en: "Gallbladder" },
+    rins: { "pt-BR": "Rins", en: "Kidneys" },
+    tireoide: { "pt-BR": "Tireoide", en: "Thyroid" },
+    "linfonodos-cervicais": { "pt-BR": "Linfonodos cervicais", en: "Cervical lymph nodes" },
+    "globo-ocular": { "pt-BR": "Globo ocular", en: "Ocular globe" },
+    orbita: { "pt-BR": "Órbita", en: "Orbit" }
+  };
+
+  const sampleDescriptions = {
+    "figado-normal": { "pt-BR": ["Fígado normal", "fígado normal"], en: ["Normal liver", "normal liver"] },
+    hepatomegalia: { "pt-BR": ["Hepatomegalia", "hepatomegalia"], en: ["Hepatomegaly", "hepatomegaly"] },
+    "vesicula-normal": { "pt-BR": ["Vesícula normal", "vesícula biliar normal"], en: ["Normal gallbladder", "normal gallbladder"] },
+    "rins-normais": { "pt-BR": ["Rins normais", "rins normais"], en: ["Normal kidneys", "normal kidneys"] },
+    "tireoide-normal": { "pt-BR": ["Tireoide normal", "tireoide normal"], en: ["Normal thyroid", "normal thyroid"] },
+    "linfonodos-habituais": { "pt-BR": ["Aspecto habitual", "linfonodos cervicais de aspecto habitual"], en: ["Usual appearance", "cervical lymph nodes with a usual appearance"] },
+    "globo-ocular-normal": { "pt-BR": ["Globo ocular normal", "globo ocular normal"], en: ["Normal ocular globe", "normal ocular globe"] },
+    "orbita-normal": { "pt-BR": ["Órbita normal", "órbita normal"], en: ["Normal orbit", "normal orbit"] }
+  };
+
+  function normalizeLanguage(language) {
+    return language === "en" ? "en" : DEFAULT_LANGUAGE;
+  }
+
+  function format(template, values = {}) {
+    return String(template).replace(/\{([a-zA-Z0-9_]+)\}/g, (match, key) =>
+      Object.hasOwn(values, key) ? String(values[key]) : match);
+  }
+
+  function t(language, key, values) {
+    const normalizedLanguage = normalizeLanguage(language);
+    const template = translations[normalizedLanguage]?.[key]
+      ?? translations[DEFAULT_LANGUAGE]?.[key]
+      ?? key;
+    return format(template, values);
+  }
+
+  function plural(language, key, count, values = {}) {
+    return t(language, `${key}.${Number(count) === 1 ? "one" : "other"}`, { ...values, count });
+  }
+
+  function applyTranslations(root, language) {
+    const normalizedLanguage = normalizeLanguage(language);
+    root.querySelectorAll("[data-i18n]").forEach((element) => {
+      element.textContent = t(normalizedLanguage, element.dataset.i18n);
+    });
+    for (const [attribute, property] of [
+      ["data-i18n-placeholder", "placeholder"],
+      ["data-i18n-title", "title"],
+      ["data-i18n-aria-label", "ariaLabel"]
+    ]) {
+      root.querySelectorAll(`[${attribute}]`).forEach((element) => {
+        element[property] = t(normalizedLanguage, element.getAttribute(attribute));
+      });
+    }
+  }
+
+  function localizeKnownName(record, dictionary, language, eligible) {
+    const localized = dictionary[record?.id];
+    if (!localized || !eligible) return String(record?.name || "");
+    const currentName = String(record?.name || "");
+    const knownNames = Object.values(localized);
+    return knownNames.includes(currentName) ? localized[normalizeLanguage(language)] : currentName;
+  }
+
+  function localizeCategoryName(category, language) {
+    return localizeKnownName(category, categoryNames, language, Boolean(category?.isBase));
+  }
+
+  function localizeOrganName(organ, language) {
+    return localizeKnownName(organ, organNames, language, Boolean(organ?.isSample));
+  }
+
+  function localizeDescription(description, language) {
+    const localized = sampleDescriptions[description?.id];
+    if (!description?.isSample || !localized) return description;
+    const normalizedLanguage = normalizeLanguage(language);
+    const [title, subject] = localized[normalizedLanguage];
+    return {
+      ...description,
+      title,
+      text: t(normalizedLanguage, "sample.exampleText", { subject })
+    };
+  }
+
+  globalScope.TYPEVET_I18N = Object.freeze({
+    DEFAULT_LANGUAGE,
+    SUPPORTED_LANGUAGES: Object.freeze([DEFAULT_LANGUAGE, "en"]),
+    normalizeLanguage,
+    t,
+    plural,
+    applyTranslations,
+    localizeCategoryName,
+    localizeOrganName,
+    localizeDescription
+  });
+})(globalThis);

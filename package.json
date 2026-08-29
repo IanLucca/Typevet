@@ -1,0 +1,11 @@
+{
+  "name": "typevet-extension",
+  "version": "0.6.0",
+  "type": "module",
+  "private": true,
+  "description": "Extensão Chrome para acesso rápido a descrições de ultrassonografia.",
+  "scripts": {
+    "test": "node tests/validate.mjs",
+    "icons": "python3 scripts/generate_icons.py"
+  }
+}

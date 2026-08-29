@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Typevet"
+  },
+  "extensionDescription": {
+    "message": "Extension for browsing and copying your custom descriptions without leaving the current web page."
+  },
+  "actionTitle": {
+    "message": "Activate typevet on this page"
+  }
+}

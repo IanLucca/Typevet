@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title data-i18n="options.pageTitle">Gerenciar descrições — typevet</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="typevet — início" data-i18n-aria-label="options.brandHome">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><path d="M12 28c4-11 8-16 12-16s8 5 12 16"/><path d="M17 29c2.5-7 5-10 7-10s4.5 3 7 10"/><path d="M13 34h22"/></svg>
+          </span>
+          <span><strong>typevet</strong><small data-i18n="options.brandSubtitle">Biblioteca de descrições</small></span>
+        </a>
+        <div class="topbar-actions">
+          <label class="preference-select">
+            <span data-i18n="options.language">Idioma</span>
+            <select id="languageSelect" aria-label="Idioma" data-i18n-aria-label="options.language">
+              <option value="pt-BR">Português</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+          <button class="button button-ghost" id="importButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg>
+            <span data-i18n="common.import">Importar</span>
+          </button>
+          <button class="button button-ghost" id="exportButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5M8 9l4-4 4 4"/><path d="M5 19h14"/></svg>
+            <span data-i18n="common.exportBackup">Exportar backup</span>
+          </button>
+          <input id="importInput" type="file" accept="application/json,.json" hidden>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="sidebar">
+          <div class="sidebar-heading">
+            <div>
+              <span class="eyebrow" data-i18n="options.organization">Organização</span>
+              <h2 data-i18n="common.categories">Categorias</h2>
+            </div>
+            <button class="icon-button" id="newCategoryButton" type="button" title="Nova categoria" aria-label="Nova categoria" data-i18n-title="common.newCategory" data-i18n-aria-label="common.newCategory">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <nav class="category-nav" id="categoryNav" aria-label="Filtrar por categoria" data-i18n-aria-label="options.filterCategory"></nav>
+          <div class="sidebar-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path d="M12 11v5M12 8h.01"/></svg>
+            <p data-i18n="options.localNote">Os textos ficam armazenados neste navegador. Exporte um backup regularmente.</p>
+          </div>
+        </aside>
+
+        <main class="main-content">
+          <section class="hero">
+            <div>
+              <span class="eyebrow" data-i18n="options.manager">Gerenciador</span>
+              <h1 data-i18n="options.heroTitle">Suas descrições, prontas para usar.</h1>
+              <p data-i18n="options.heroText">Cadastre os textos uma vez e acesse todos pelo botão flutuante enquanto navega.</p>
+            </div>
+            <div class="hero-actions">
+              <button class="button button-ghost" id="newOrganButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                <span data-i18n="common.newOrgan">Novo órgão</span>
+              </button>
+              <button class="button button-primary" id="newDescriptionButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                <span data-i18n="common.newDescription">Nova descrição</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="stats" aria-label="Resumo da biblioteca" data-i18n-aria-label="options.librarySummary">
+            <article class="stat-card stat-primary">
+              <span class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span>
+              <div><strong id="descriptionCount">0</strong><span data-i18n="common.descriptions">Descrições</span></div>
+            </article>
+            <article class="stat-card">
+              <span class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 3l8 4.5V17l-8 4-8-4V7.5Z"/><path d="m4 7.5 8 4 8-4M12 11.5V21"/></svg></span>
+              <div><strong id="organCount">0</strong><span data-i18n="common.organs">Órgãos</span></div>
+            </article>
+            <article class="stat-card">
+              <span class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h6l2 2h8v10H4V6Z"/><path d="M4 10h16"/></svg></span>
+              <div><strong id="categoryCount">0</strong><span data-i18n="common.categories">Categorias</span></div>
+            </article>
+            <article class="stat-card">
+              <span class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="10" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg></span>
+              <div><strong id="copyCount">0</strong><span data-i18n="common.copies">Cópias realizadas</span></div>
+            </article>
+          </section>
+
+          <section class="library-section">
+            <div class="library-toolbar">
+              <div>
+                <h2 id="listTitle" data-i18n="options.libraryByOrgans">Biblioteca por órgãos</h2>
+                <p id="listSubtitle" data-i18n="options.manageTexts">Gerencie os textos disponíveis no painel flutuante.</p>
+              </div>
+              <label class="search-field">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+                <input id="searchInput" type="search" placeholder="Buscar no gerenciador" data-i18n-placeholder="options.searchPlaceholder" autocomplete="off">
+              </label>
+            </div>
+
+            <div class="description-list" id="descriptionList"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <dialog class="modal" id="descriptionDialog">
+      <form class="modal-card" id="descriptionForm" method="dialog">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow" data-i18n="options.library">Biblioteca</span>
+            <h2 id="descriptionDialogTitle" data-i18n="common.newDescription">Nova descrição</h2>
+          </div>
+          <button class="icon-button" data-close-dialog="descriptionDialog" type="button" aria-label="Fechar" data-i18n-aria-label="common.close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input id="descriptionId" type="hidden">
+          <label class="field">
+            <span data-i18n="options.variationName">Nome da variação ou achado</span>
+            <input id="descriptionTitle" type="text" maxlength="100" placeholder="Ex.: Fígado normal ou Hepatomegalia" data-i18n-placeholder="options.variationPlaceholder" required>
+          </label>
+          <label class="field">
+            <span data-i18n="common.organ">Órgão</span>
+            <select id="descriptionOrgan" required></select>
+          </label>
+          <label class="field">
+            <span data-i18n="options.standardDescription">Descrição padronizada</span>
+            <textarea id="descriptionText" rows="11" maxlength="20000" placeholder="Digite ou cole aqui o texto que será copiado..." data-i18n-placeholder="panel.descriptionPlaceholder" required></textarea>
+            <small><span id="characterCount">0</span>/20.000 <span data-i18n="options.characters">caracteres</span></small>
+          </label>
+          <label class="favorite-toggle">
+            <input id="descriptionFavorite" type="checkbox">
+            <span class="toggle-track" aria-hidden="true"><span></span></span>
+            <span><strong data-i18n="common.addFavorites">Adicionar aos favoritos</strong><small data-i18n="options.favoriteHelp">Exibe esta descrição no acesso rápido.</small></span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button class="button button-ghost" data-close-dialog="descriptionDialog" type="button" data-i18n="common.cancel">Cancelar</button>
+          <button class="button button-primary" type="submit" data-i18n="common.saveDescription">Salvar descrição</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal modal-small" id="organDialog">
+      <form class="modal-card" id="organForm" method="dialog">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow" data-i18n="options.grouping">Agrupamento</span>
+            <h2 id="organDialogTitle" data-i18n="common.newOrgan">Novo órgão</h2>
+          </div>
+          <button class="icon-button" data-close-dialog="organDialog" type="button" aria-label="Fechar" data-i18n-aria-label="common.close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input id="organId" type="hidden">
+          <label class="field">
+            <span data-i18n="options.organName">Nome do órgão ou estrutura</span>
+            <input id="organName" type="text" maxlength="80" placeholder="Ex.: Fígado" data-i18n-placeholder="options.organPlaceholder" required>
+          </label>
+          <label class="field">
+            <span data-i18n="common.category">Categoria</span>
+            <select id="organCategory" required></select>
+          </label>
+        </div>
+        <div class="modal-footer split-footer">
+          <button class="button button-danger-text" id="deleteOrganButton" type="button" hidden data-i18n="common.deleteOrgan">Excluir órgão</button>
+          <span></span>
+          <button class="button button-ghost" data-close-dialog="organDialog" type="button" data-i18n="common.cancel">Cancelar</button>
+          <button class="button button-primary" type="submit" data-i18n="common.saveOrgan">Salvar órgão</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal modal-small" id="categoryDialog">
+      <form class="modal-card" id="categoryForm" method="dialog">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow" data-i18n="options.organization">Organização</span>
+            <h2 id="categoryDialogTitle" data-i18n="common.newCategory">Nova categoria</h2>
+          </div>
+          <button class="icon-button" data-close-dialog="categoryDialog" type="button" aria-label="Fechar" data-i18n-aria-label="common.close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input id="categoryId" type="hidden">
+          <label class="field">
+            <span data-i18n="options.categoryName">Nome da categoria</span>
+            <input id="categoryName" type="text" maxlength="60" placeholder="Ex.: Abdome" data-i18n-placeholder="options.categoryPlaceholder" required>
+          </label>
+          <label class="field color-field">
+            <span data-i18n="options.color">Cor</span>
+            <input id="categoryColor" type="color" value="#1f7a8c">
+          </label>
+        </div>
+        <div class="modal-footer split-footer">
+          <button class="button button-danger-text" id="deleteCategoryButton" type="button" hidden data-i18n="common.deleteCategory">Excluir categoria</button>
+          <span></span>
+          <button class="button button-ghost" data-close-dialog="categoryDialog" type="button" data-i18n="common.cancel">Cancelar</button>
+          <button class="button button-primary" type="submit" data-i18n="common.saveCategory">Salvar categoria</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="../shared/i18n.js"></script>
+    <script src="../shared/defaults.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
