@@ -55,7 +55,6 @@ From the floating panel, the user can:
 - Manifest V3
 - Chrome Storage API
 - Clipboard API
-- Shadow DOM
 
 The main interface does not rely on external frameworks or libraries.
 
