@@ -187,12 +187,6 @@ Contains the styles used by the interface displayed directly over the host page.
 
 Responsible for managing stored categories, organs, and descriptions.
 
-## Compatibility With Modal-Based Web Applications
-
-Some web applications use **focus traps** to prevent keyboard focus from leaving an open modal.
-
-Because TypeVet provides an independent interface injected over the host page, the project uses Shadow DOM and event isolation techniques to reduce conflicts between TypeVet controls and modal-based interfaces.
-
 ## Project Status
 
 TypeVet is currently under development.
