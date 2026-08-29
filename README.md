@@ -22,7 +22,7 @@ The extension also provides a floating panel directly on the page being used by 
 - Persistent floating button position
 - Local import and management of descriptions
 - Local storage using the Chrome Storage API
-- 
+  
 ## How It Works
 
 Stored texts are organized locally in a structure similar to:
