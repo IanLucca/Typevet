@@ -1,6 +1,9 @@
-# TypeVet
+# TypeVet 
 
 A Google Chrome extension designed to streamline the use of standardized descriptions while writing reports.
+
+You can download it on Chrome Extension Store. [Just click it here](https://chromewebstore.google.com/detail/typevet/iombnehbdjfbpmgbhmebjfpbjoimpomc).
+
 
 **TypeVet** allows users to organize reusable texts by categories and organs, search descriptions, mark content as favorite, and quickly copy it for use in web-based clinical systems.
 
