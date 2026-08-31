@@ -58,6 +58,12 @@ From the floating panel, the user can:
 
 The main interface does not rely on external frameworks or libraries.
 
+## Motivation
+
+TypeVet started from a problem I noticed in veterinarian field: writing ultrasound and clinical reports involves repeating the same standardized descriptions (normal liver, hepatomegaly, and dozens of other findings) over and over, across different web-based clinical systems that don't offer any way to save or reuse text snippets.
+
+Rather than keep copying from personal notes or retyping the same descriptions by hand, I built TypeVet to keep a searchable, organized library of one's own descriptions available in a floating panel, directly on top of whatever system the person is working in.
+
 ## Development Installation
 
 ### 1. Download the project
@@ -218,6 +224,4 @@ docs: update project README
 
 ## License
 
-No license has been defined for this project yet.
-
-If the repository is made publicly available as open-source software, a license should be explicitly selected before allowing redistribution or modification by third parties.
+This project is licensed under the MIT License — see the LICENSE file for details.
