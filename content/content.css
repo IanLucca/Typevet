@@ -1,10 +1,16 @@
 :host {
   all: initial;
   color: #173042;
+  color-scheme: light;
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 14px;
+  inset: 0;
+  isolation: isolate;
   line-height: 1.45;
+  pointer-events: none;
+  position: fixed;
   text-rendering: optimizeLegibility;
+  z-index: 2147483647;
 }
 
 *, *::before, *::after {
@@ -35,6 +41,7 @@ button:focus-visible {
   height: 54px;
   justify-content: center;
   padding: 0 18px 0 12px;
+  pointer-events: auto;
   position: fixed;
   right: 24px;
   touch-action: none;
@@ -132,12 +139,13 @@ button:focus-visible {
   border-bottom: 1px solid #e4edf0;
   display: grid;
   gap: 4px;
-  grid-template-columns: 38px minmax(0, 1fr) auto 38px;
+  grid-template-columns: 38px minmax(0, 1fr) auto auto 38px;
   min-height: 68px;
   padding: 10px 12px;
 }
 
-.sono-language-button {
+.sono-language-button,
+.sono-theme-button {
   align-items: center;
   background: #edf5f6;
   border: 1px solid #d8e8ea;
@@ -154,9 +162,20 @@ button:focus-visible {
   width: 31px;
 }
 
-.sono-language-button:hover {
+.sono-language-button:hover,
+.sono-theme-button:hover {
   background: #deedef;
   color: #156e82;
+}
+
+.sono-theme-button svg {
+  fill: none;
+  height: 15px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
+  width: 15px;
 }
 
 .sono-brand {
@@ -253,6 +272,128 @@ button:focus-visible {
 .sono-back-button[hidden] {
   display: block;
   visibility: hidden;
+}
+
+.sono-favorites-bar {
+  align-items: center;
+  background: #eef7f8;
+  border-bottom: 1px solid #dcebed;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  min-height: 50px;
+  padding: 7px 9px 7px 11px;
+}
+
+.sono-favorites-bar[hidden] {
+  display: none;
+}
+
+.sono-favorites-label {
+  align-items: center;
+  color: #8f681d;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  font-size: 8.5px;
+  font-weight: 800;
+  gap: 1px;
+  letter-spacing: .03em;
+  line-height: 1;
+  min-width: 45px;
+  text-transform: uppercase;
+}
+
+.sono-favorites-label svg,
+.sono-favorite-chip svg {
+  fill: none;
+  height: 15px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 15px;
+}
+
+.sono-favorites-label svg {
+  color: #d49a28;
+  fill: rgba(212, 154, 40, .12);
+  height: 17px;
+  width: 17px;
+}
+
+.sono-favorites-list {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 1px 2px 3px;
+  scrollbar-color: #b6cdd1 transparent;
+  scrollbar-width: thin;
+}
+
+.sono-favorites-list::-webkit-scrollbar {
+  height: 4px;
+}
+
+.sono-favorites-list::-webkit-scrollbar-thumb {
+  background: #b6cdd1;
+  border-radius: 999px;
+}
+
+.sono-favorite-chip {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d7e6e9;
+  border-radius: 10px;
+  color: #315866;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  height: 34px;
+  max-width: 190px;
+  padding: 0 8px;
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+
+.sono-favorite-chip:hover {
+  background: #fffdf7;
+  border-color: #dfbd76;
+  color: #176f82;
+  transform: translateY(-1px);
+}
+
+.sono-favorite-chip-star {
+  color: #d19728;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.sono-favorite-chip-star svg {
+  fill: rgba(209, 151, 40, .16);
+}
+
+.sono-favorite-chip-title {
+  font-size: 10.5px;
+  font-weight: 750;
+  max-width: 125px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sono-favorite-chip-copy {
+  color: #7b949d;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.sono-favorite-chip-copy svg {
+  height: 13px;
+  width: 13px;
 }
 
 .sono-panel-body {
@@ -1247,6 +1388,16 @@ button:focus-visible {
   padding: 7px 12px;
 }
 
+.sono-footer-create {
+  display: flex;
+  gap: 4px;
+  margin-right: auto;
+}
+
+.sono-footer-create[hidden] {
+  display: none;
+}
+
 .sono-panel-footer button {
   align-items: center;
   background: transparent;
@@ -1272,7 +1423,11 @@ button:focus-visible {
 .sono-panel-footer .sono-footer-add {
   background: #e5f3f5;
   color: #176c7f;
-  margin-right: auto;
+}
+
+.sono-panel-footer .sono-footer-organ {
+  background: #edf3f7;
+  color: #496e7c;
 }
 
 .sono-panel-footer [data-role="fab-visibility"] {
@@ -1317,6 +1472,238 @@ button:focus-visible {
   transform: translate(-50%, 0);
 }
 
+:host([data-theme="dark"]) {
+  color: #d9e8ec;
+  color-scheme: dark;
+}
+
+:host([data-theme="dark"]) .sono-panel {
+  background: #0f1a22;
+  border-color: #29404b;
+  box-shadow: 0 24px 75px rgba(0, 0, 0, .56), 0 5px 18px rgba(0, 0, 0, .32);
+}
+
+:host([data-theme="dark"]) .sono-panel-header,
+:host([data-theme="dark"]) .sono-panel-footer {
+  background: #14232c;
+  border-color: #29404b;
+}
+
+:host([data-theme="dark"]) .sono-favorites-bar {
+  background: #12242c;
+  border-color: #29404b;
+}
+
+:host([data-theme="dark"]) .sono-favorites-label {
+  color: #d4b574;
+}
+
+:host([data-theme="dark"]) .sono-favorites-list {
+  scrollbar-color: #46616c transparent;
+}
+
+:host([data-theme="dark"]) .sono-favorites-list::-webkit-scrollbar-thumb {
+  background: #46616c;
+}
+
+:host([data-theme="dark"]) .sono-favorite-chip {
+  background: #192b34;
+  border-color: #314a55;
+  color: #d8e8ec;
+}
+
+:host([data-theme="dark"]) .sono-favorite-chip:hover {
+  background: #233b45;
+  border-color: #816c3d;
+  color: #85d5df;
+}
+
+:host([data-theme="dark"]) .sono-favorite-chip-copy {
+  color: #8ba5ae;
+}
+
+:host([data-theme="dark"]) .sono-language-button,
+:host([data-theme="dark"]) .sono-theme-button {
+  background: #203640;
+  border-color: #35515d;
+  color: #a8c8d1;
+}
+
+:host([data-theme="dark"]) .sono-language-button:hover,
+:host([data-theme="dark"]) .sono-theme-button:hover,
+:host([data-theme="dark"]) .sono-header-button:hover,
+:host([data-theme="dark"]) .sono-icon-button:hover,
+:host([data-theme="dark"]) .sono-panel-footer button:hover {
+  background: #284550;
+  color: #7dd5e1;
+}
+
+:host([data-theme="dark"]) .sono-brand small,
+:host([data-theme="dark"]) .sono-eyebrow,
+:host([data-theme="dark"]) .sono-quick-copy small,
+:host([data-theme="dark"]) .sono-category-count,
+:host([data-theme="dark"]) .sono-category-hero p,
+:host([data-theme="dark"]) .sono-organ-content small,
+:host([data-theme="dark"]) .sono-search-meta,
+:host([data-theme="dark"]) .sono-description-excerpt,
+:host([data-theme="dark"]) .sono-quick-add-intro p,
+:host([data-theme="dark"]) .sono-quick-favorite small,
+:host([data-theme="dark"]) .sono-empty-state,
+:host([data-theme="dark"]) .sono-edit-link {
+  color: #8da7b0;
+}
+
+:host([data-theme="dark"]) .sono-brand strong,
+:host([data-theme="dark"]) .sono-section-heading h3,
+:host([data-theme="dark"]) .sono-category-hero h3,
+:host([data-theme="dark"]) .sono-detail-heading h3,
+:host([data-theme="dark"]) .sono-quick-copy strong,
+:host([data-theme="dark"]) .sono-category-name,
+:host([data-theme="dark"]) .sono-organ-content strong,
+:host([data-theme="dark"]) .sono-description-title-line strong,
+:host([data-theme="dark"]) .sono-quick-add-intro strong,
+:host([data-theme="dark"]) .sono-quick-favorite strong,
+:host([data-theme="dark"]) .sono-empty-state strong {
+  color: #dcebef;
+}
+
+:host([data-theme="dark"]) .sono-panel-body {
+  scrollbar-color: #46616c transparent;
+}
+
+:host([data-theme="dark"]) .sono-panel-body::-webkit-scrollbar-thumb {
+  background: #46616c;
+  border-color: #0f1a22;
+}
+
+:host([data-theme="dark"]) .sono-total-badge,
+:host([data-theme="dark"]) .sono-primary-icon-button,
+:host([data-theme="dark"]) .sono-panel-footer .sono-footer-add {
+  background: #1b3a43;
+  color: #79cfda;
+}
+
+:host([data-theme="dark"]) .sono-panel-footer .sono-footer-organ {
+  background: #243640;
+  color: #abc1c8;
+}
+
+:host([data-theme="dark"]) .sono-quick-list,
+:host([data-theme="dark"]) .sono-category-card,
+:host([data-theme="dark"]) .sono-organ-card,
+:host([data-theme="dark"]) .sono-description-card,
+:host([data-theme="dark"]) .sono-quick-favorite,
+:host([data-theme="dark"]) .sono-text-preview,
+:host([data-theme="dark"]) .sono-form-cancel {
+  background: #17262f;
+  border-color: #2a414c;
+}
+
+:host([data-theme="dark"]) .sono-quick-row,
+:host([data-theme="dark"]) .sono-description-card {
+  border-color: #2a414c;
+}
+
+:host([data-theme="dark"]) .sono-tip,
+:host([data-theme="dark"]) .sono-quick-add-intro {
+  background: linear-gradient(135deg, #17313a, #17262f);
+  border-color: #294852;
+  color: #d5e6ea;
+}
+
+:host([data-theme="dark"]) .sono-tip-star,
+:host([data-theme="dark"]) .sono-quick-add-intro > span,
+:host([data-theme="dark"]) .sono-category-hero-icon {
+  background: #20333d;
+}
+
+:host([data-theme="dark"]) .sono-category-icon,
+:host([data-theme="dark"]) .sono-mini-icon,
+:host([data-theme="dark"]) .sono-detail-icon,
+:host([data-theme="dark"]) .sono-organ-icon {
+  background: color-mix(in srgb, var(--accent) 24%, #14232c);
+}
+
+:host([data-theme="dark"]) .sono-category-hero {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 19%, #14232c), #17262f);
+  border-color: color-mix(in srgb, var(--accent) 35%, #2a414c);
+}
+
+:host([data-theme="dark"]) .sono-category-card:hover,
+:host([data-theme="dark"]) .sono-organ-card:hover,
+:host([data-theme="dark"]) .sono-description-card:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .28);
+}
+
+:host([data-theme="dark"]) .sono-organ-add-button {
+  background: #17343d;
+  border-color: #2c5964;
+  color: #78ced9;
+}
+
+:host([data-theme="dark"]) .sono-organ-add-button:hover,
+:host([data-theme="dark"]) .sono-secondary-button:hover,
+:host([data-theme="dark"]) .sono-copy-button:hover {
+  background: #24444e;
+}
+
+:host([data-theme="dark"]) .sono-organ-search {
+  background: #17262f;
+  border-color: #2e4752;
+}
+
+:host([data-theme="dark"]) .sono-organ-search:focus-within {
+  border-color: #4e9aa8;
+  box-shadow: 0 0 0 3px rgba(59, 167, 183, .16);
+}
+
+:host([data-theme="dark"]) .sono-organ-search input,
+:host([data-theme="dark"]) .sono-field input,
+:host([data-theme="dark"]) .sono-field select,
+:host([data-theme="dark"]) .sono-field textarea {
+  background: #111f27;
+  border-color: #344d58;
+  color: #e0edf0;
+}
+
+:host([data-theme="dark"]) .sono-organ-search input::placeholder,
+:host([data-theme="dark"]) .sono-field input::placeholder,
+:host([data-theme="dark"]) .sono-field textarea::placeholder {
+  color: #708a94;
+}
+
+:host([data-theme="dark"]) .sono-field > span,
+:host([data-theme="dark"]) .sono-form-cancel,
+:host([data-theme="dark"]) .sono-secondary-button,
+:host([data-theme="dark"]) .sono-panel-footer button,
+:host([data-theme="dark"]) .sono-copy-button {
+  color: #a5bec6;
+}
+
+:host([data-theme="dark"]) .sono-text-preview {
+  color: #d5e3e7;
+}
+
+:host([data-theme="dark"]) .sono-sample-notice {
+  background: #392f1e;
+  border-color: #66512a;
+  color: #e3c47d;
+}
+
+:host([data-theme="dark"]) .sono-sample-tag {
+  background: #3b301e;
+  color: #dfbd70;
+}
+
+:host([data-theme="dark"]) .sono-search-empty strong {
+  color: #d5e4e8;
+}
+
+:host([data-theme="dark"]) .sono-toast {
+  background: #244550;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .42);
+}
+
 @media (max-width: 520px) {
   .sono-fab {
     bottom: 16px;
@@ -1336,6 +1723,19 @@ button:focus-visible {
     bottom: 82px;
     max-height: calc(100vh - 100px);
     right: 16px;
+  }
+
+  .sono-panel-footer [data-action="toggle-fab-visibility"] > span,
+  .sono-panel-footer [data-action="manager"] > span {
+    display: none;
+  }
+
+  .sono-favorites-label span {
+    display: none;
+  }
+
+  .sono-favorites-label {
+    min-width: 22px;
   }
 }
 

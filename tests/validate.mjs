@@ -11,7 +11,7 @@ const read = (path) => readFileSync(resolve(root, path), "utf8");
 const manifest = JSON.parse(read("manifest.json"));
 assert.equal(manifest.manifest_version, 3, "A extensão deve usar Manifest V3");
 assert.equal(manifest.name, "__MSG_extensionName__");
-assert.equal(manifest.version, "0.6.0");
+assert.equal(manifest.version, "0.7.1");
 assert.equal(manifest.default_locale, "pt_BR");
 assert.ok(manifest.permissions.includes("storage"));
 assert.ok(manifest.permissions.includes("clipboardWrite"));
@@ -39,8 +39,8 @@ for (const path of referencedFiles) {
 
 const ptLocale = JSON.parse(read("_locales/pt_BR/messages.json"));
 const enLocale = JSON.parse(read("_locales/en/messages.json"));
-assert.equal(ptLocale.extensionName.message, "typevet");
-assert.equal(enLocale.extensionName.message, "typevet");
+assert.equal(ptLocale.extensionName.message, "Typevet");
+assert.equal(enLocale.extensionName.message, "Typevet");
 assert.ok(enLocale.extensionDescription.message.includes("ultrasound"));
 assert.ok(ptLocale.actionTitle.message.includes("nesta página"));
 assert.ok(enLocale.actionTitle.message.includes("this page"));
@@ -54,12 +54,15 @@ assert.ok(defaults.descriptions.length >= 1);
 assert.equal(defaults.settings.fabPosition, null, "A posição inicial do botão deve usar o canto padrão");
 assert.equal(defaults.settings.showFloatingButton, true);
 assert.equal(defaults.settings.language, "pt-BR");
+assert.equal(defaults.settings.theme, "light");
 assert.equal(typeof globalThis.TYPEVET.detectInitialLanguage, "function");
 assert.equal(globalThis.TYPEVET_I18N.t("en", "common.descriptions"), "Descriptions");
 assert.equal(globalThis.TYPEVET_I18N.t("pt-BR", "common.library"), "Biblioteca");
 assert.equal(globalThis.TYPEVET_I18N.t("en", "common.library"), "Library");
 assert.equal(globalThis.TYPEVET_I18N.t("pt-BR", "panel.hideFab"), "Desativar botão");
 assert.equal(globalThis.TYPEVET_I18N.t("en", "panel.hideFab"), "Disable button");
+assert.equal(globalThis.TYPEVET_I18N.t("pt-BR", "panel.themeToDark"), "Ativar modo escuro");
+assert.equal(globalThis.TYPEVET_I18N.t("en", "panel.themeToLight"), "Enable light mode");
 assert.equal(globalThis.TYPEVET_I18N.localizeCategoryName(defaults.categories[0], "en"), "Abdomen");
 assert.equal(globalThis.TYPEVET_I18N.localizeOrganName(defaults.organs[0], "en"), "Liver");
 const englishSample = globalThis.TYPEVET_I18N.localizeDescription(defaults.descriptions[0], "en");
@@ -108,7 +111,7 @@ assert.equal(globalThis.TYPEVET.matchesDescriptionSearch(liverDescriptions[0], "
 
 const optionsHtml = read("options/options.html");
 const englishReadme = read("README.en.md");
-assert.ok(optionsHtml.includes("typevet"));
+assert.ok(optionsHtml.includes("Typevet"));
 assert.ok(englishReadme.includes("Disable button"));
 assert.equal(/sonotexto/i.test(optionsHtml), false, "A interface ainda contém a marca anterior");
 const ids = [...optionsHtml.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
@@ -123,7 +126,8 @@ for (const requiredId of [
   "organDialog",
   "categoryDialog",
   "importInput",
-  "languageSelect"
+  "languageSelect",
+  "themeSelect"
 ]) {
   assert.ok(ids.includes(requiredId), `Elemento obrigatório ausente: ${requiredId}`);
 }
@@ -157,6 +161,7 @@ const existingV2 = globalThis.TYPEVET.migrateStoredData({
 assert.equal(existingV2.didMigrate, false);
 assert.equal(existingV2.settings.showFloatingButton, true, "Usuários atuais devem receber o botão ativo por padrão");
 assert.equal(existingV2.settings.language, "pt-BR", "Usuários atuais devem iniciar em português");
+assert.equal(existingV2.settings.theme, "light", "Usuários atuais devem iniciar no tema claro");
 assert.deepEqual(existingV2.settings.fabPosition, { xRatio: 0.4, yRatio: 0.6 });
 
 for (const file of [
@@ -180,6 +185,8 @@ const serviceWorkerSource = read("background/service-worker.js");
 assert.ok(floatingPanelSource.includes('data-role="organ-search"'), "A pesquisa por órgão não foi renderizada");
 assert.ok(floatingPanelSource.includes("matchesDescriptionSearch"));
 assert.ok(floatingPanelSource.includes('data-role="quick-add-form"'), "O cadastro rápido não foi renderizado no painel");
+assert.ok(floatingPanelSource.includes('data-role="quick-add-organ-form"'), "O cadastro rápido de órgão não foi renderizado no painel");
+assert.ok(floatingPanelSource.includes("saveQuickOrgan"), "O painel não salva novos órgãos");
 assert.ok(floatingPanelSource.includes("pointerdown"), "O botão flutuante não possui início de arraste");
 assert.ok(floatingPanelSource.includes("persistFabPosition"), "A posição do botão não é persistida");
 assert.ok(floatingPanelSource.includes("fabPosition"), "A posição salva do botão não é aplicada");
@@ -192,6 +199,15 @@ const categoryCardsPosition = floatingPanelSource.indexOf("${state.categories.ma
 assert.ok(homeViewStart >= 0 && libraryCardPosition > homeViewStart, "A Biblioteca não foi adicionada à tela inicial");
 assert.ok(libraryCardPosition < categoryCardsPosition, "A Biblioteca deve ser a primeira opção do painel");
 assert.ok(floatingPanelSource.includes("toggle-language"), "O painel não permite alternar o idioma");
+assert.ok(floatingPanelSource.includes("toggle-theme"), "O painel não permite alternar o tema");
+assert.ok(floatingPanelSource.includes("activeModalDialog"), "O painel não trata páginas com diálogo modal em evidência");
+assert.ok(floatingPanelSource.includes('.modal.show'), "O painel não reconhece modais Bootstrap em evidência");
+assert.ok(floatingPanelSource.includes("ngb-modal-window"), "O painel não reconhece modais Angular em evidência");
+assert.ok(floatingPanelSource.includes('data-role="favorites-bar"'), "A barra de favoritos não foi renderizada");
+assert.ok(floatingPanelSource.includes("renderFavoritesBar"), "A barra de favoritos não é atualizada");
+assert.ok(floatingPanelSource.includes('"class", "style", "aria-hidden", "aria-modal"'), "Mudanças de camada modal não são acompanhadas");
+assert.ok(floatingPanelSource.includes('"z-index": "2147483647"'), "O host do painel não recebe prioridade visual máxima");
+assert.ok(floatingPanelSource.includes("protectEventsFromHostPage"), "Eventos do painel podem vazar para a página hospedeira");
 assert.ok(floatingPanelSource.includes("TYPEVET_BOOTSTRAP"), "O painel não recebe a inicialização sob demanda");
 assert.ok(floatingPanelSource.includes("TYPEVET_OPEN_PANEL"), "O painel não responde ao clique no ícone");
 assert.ok(serviceWorkerSource.includes("chrome.scripting.executeScript"), "A interface não é injetada com scripting");

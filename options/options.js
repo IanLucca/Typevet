@@ -50,6 +50,7 @@
     exportButton: document.querySelector("#exportButton"),
     importInput: document.querySelector("#importInput"),
     languageSelect: document.querySelector("#languageSelect"),
+    themeSelect: document.querySelector("#themeSelect"),
     toast: document.querySelector("#toast"),
     descriptionDialog: document.querySelector("#descriptionDialog"),
     descriptionForm: document.querySelector("#descriptionForm"),
@@ -93,6 +94,7 @@
     .replaceAll("'", "&#039;");
 
   const currentLanguage = () => normalizeLanguage(state.settings.language);
+  const currentTheme = () => state.settings.theme === "dark" ? "dark" : "light";
   const tr = (key, values) => translate(currentLanguage(), key, values);
   const trPlural = (key, count, values) => translatePlural(currentLanguage(), key, count, values);
   const displayCategoryName = (category) => localizeCategoryName(category, currentLanguage());
@@ -103,7 +105,9 @@
     const language = currentLanguage();
     applyTranslations(document, language);
     document.documentElement.lang = language;
+    document.documentElement.dataset.theme = currentTheme();
     elements.languageSelect.value = language;
+    elements.themeSelect.value = currentTheme();
 
     if (elements.descriptionDialog.open) {
       elements.descriptionDialogTitle.textContent = elements.descriptionId.value
@@ -666,7 +670,7 @@
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `typevet-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    anchor.download = `Typevet-backup-${new Date().toISOString().slice(0, 10)}.json`;
     anchor.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast(tr("options.backupExported"));
@@ -737,6 +741,14 @@
     showToast(language === "en" ? tr("toast.languageEnglish") : tr("toast.languagePortuguese"));
   }
 
+  async function updateTheme() {
+    const theme = elements.themeSelect.value === "dark" ? "dark" : "light";
+    state.settings = { ...state.settings, theme };
+    refreshStaticUi();
+    await chrome.storage.local.set({ [STORAGE_KEYS.settings]: state.settings });
+    showToast(tr(theme === "dark" ? "toast.themeDark" : "toast.themeLight"));
+  }
+
   function bindEvents() {
     elements.categoryNav.addEventListener("click", handleCategoryNavClick);
     elements.descriptionList.addEventListener("click", handleLibraryClick);
@@ -759,6 +771,7 @@
     elements.importButton.addEventListener("click", () => elements.importInput.click());
     elements.importInput.addEventListener("change", importBackup);
     elements.languageSelect.addEventListener("change", () => void updateLanguage());
+    elements.themeSelect.addEventListener("change", () => void updateTheme());
 
     document.addEventListener("click", (event) => {
       const closeButton = event.target.closest("[data-close-dialog]");

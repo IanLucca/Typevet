@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TypeVet 
 
 A Google Chrome extension designed to streamline the use of standardized descriptions while writing reports.
@@ -6,18 +7,27 @@ You can download it on Chrome Extension Store. [Just click it here](https://chro
 
 
 **TypeVet** allows users to organize reusable texts by categories and organs, search descriptions, mark content as favorite, and quickly copy it for use in web-based clinical systems.
+=======
+# Typevet
+
+A Google Chrome extension designed to streamline the use of standardized descriptions while writing reports.
+
+**Typevet** allows users to organize reusable texts by categories and organs, search descriptions, mark content as favorite, and quickly copy it for use in web-based clinical systems.
+>>>>>>> 17d0e18 (Adding: Favorites horizontal bar | Dark mode | Fixing the text box)
 
 The extension also provides a floating panel directly on the page being used by the professional, reducing the need to switch between tabs or external documents.
 
-> **Disclaimer:** TypeVet is an independent tool. 
+> **Disclaimer:** Typevet is an independent tool.
 
 ## Features
 
 - Organization of descriptions by **categories** and **organs**
 - Creation of new descriptions
+- Quick creation of organs from the floating panel
 - Editing and management of stored texts
 - Search by title and content
 - Favorite descriptions
+- Horizontal favorites bar with one-click copy
 - Recently used descriptions
 - Quick copy to clipboard
 - Floating panel available directly on compatible web pages
@@ -25,7 +35,14 @@ The extension also provides a floating panel directly on the page being used by 
 - Persistent floating button position
 - Local import and management of descriptions
 - Local storage using the Chrome Storage API
+<<<<<<< HEAD
   
+=======
+- Interface isolation through Shadow DOM
+- Light and dark themes synchronized between the panel and manager
+- Compatibility layer for full-screen views and native, Bootstrap, Angular, Material, and PrimeNG page dialogs
+
+>>>>>>> 17d0e18 (Adding: Favorites horizontal bar | Dark mode | Fixing the text box)
 ## How It Works
 
 Stored texts are organized locally in a structure similar to:
@@ -38,7 +55,7 @@ Category
     └── Description 3
 ```
 
-When a compatible page is opened, TypeVet injects a floating button into the interface.
+When the user clicks the extension icon on a compatible page, Typevet injects its floating interface into the current tab.
 
 From the floating panel, the user can:
 
@@ -48,6 +65,8 @@ From the floating panel, the user can:
 4. preview the text;
 5. copy it to the clipboard;
 6. create new descriptions without leaving the current page.
+7. create new organs without opening the management page;
+8. switch between light and dark themes.
 
 ## Technologies
 
@@ -95,14 +114,14 @@ manifest.json
 
 ### 5. Reload the target page
 
-After installing or updating the extension, reload the web page where you want to use TypeVet.
+After installing or updating the extension, reload the web page where you want to use Typevet.
 
 ## Updating the Extension During Development
 
 Whenever you modify the extension files:
 
 1. open `chrome://extensions`;
-2. find TypeVet;
+2. find Typevet;
 3. click **Reload**;
 4. return to the page where you are testing it;
 5. press `F5`.
@@ -111,9 +130,9 @@ Content scripts that are already loaded on a page may continue using an older ve
 
 ## Data and Privacy
 
-TypeVet stores descriptions and settings locally using `chrome.storage.local`.
+Typevet stores descriptions and settings locally using `chrome.storage.local`.
 
-The extension is not designed to send stored descriptions to a TypeVet-owned external server.
+The extension is not designed to send stored descriptions to a Typevet-owned external server.
 
 Do not commit the following content to the repository:
 
@@ -144,16 +163,20 @@ Used to store local data such as:
 
 Used to copy a selected description to the clipboard when requested by the user.
 
-### Host permission
+### `activeTab`
 
-Used to allow the content script to run on compatible pages and provide the floating TypeVet interface while the user is working.
+Grants temporary access only to the current tab after the user explicitly clicks the Typevet icon.
+
+### `scripting`
+
+Used to inject the packaged interface into that temporarily authorized tab. Typevet does not request permanent host permissions.
 
 ## Project Structure
 
 The exact structure may change between versions, but the main components are organized similarly to:
 
 ```text
-TypeVet/
+typevet/
 │
 ├── manifest.json
 ├── README.md
@@ -196,13 +219,13 @@ Responsible for managing stored categories, organs, and descriptions.
 
 ## Project Status
 
-TypeVet is currently under development.
+Typevet is currently under development.
 
 The interface, data model, permissions, and compatibility behavior may change before a stable release.
 
 ## Purpose
 
-The goal of TypeVet is to reduce repetitive work related to writing standardized descriptions during veterinary ultrasound workflows by keeping reusable text organized and quickly accessible from within the browser.
+The goal of Typevet is to reduce repetitive work related to writing standardized descriptions during veterinary ultrasound workflows by keeping reusable text organized and quickly accessible from within the browser.
 
 ## Contributing
 

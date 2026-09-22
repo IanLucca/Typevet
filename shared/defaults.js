@@ -59,6 +59,7 @@
     showOnAllSites: true,
     showFloatingButton: true,
     language: detectInitialLanguage(),
+    theme: "light",
     fabPosition: null,
     schemaVersion: 2
   };

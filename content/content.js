@@ -4,6 +4,22 @@
   const ROOT_ID = "typevet-extension-root";
   const FAB_DRAG_THRESHOLD = 5;
   const PANEL_GAP = 10;
+  const MODAL_SELECTOR = [
+    "dialog[open]",
+    '[aria-modal="true"]',
+    ".modal.show",
+    ".modal.in",
+    "ngb-modal-window",
+    "mat-dialog-container",
+    ".mat-mdc-dialog-container",
+    '.cdk-overlay-pane[role="dialog"]',
+    ".p-dialog",
+    ".MuiModal-root",
+    ".offcanvas.show",
+    ".ReactModal__Content--after-open",
+    '[data-radix-dialog-content]',
+    '[role="dialog"]'
+  ].join(",");
   const bootstrap = globalThis.TYPEVET_BOOTSTRAP || {};
   const injectedCssText = typeof bootstrap.cssText === "string" ? bootstrap.cssText : "";
   let openPanelRequested = bootstrap.openPanel === true;
@@ -31,6 +47,8 @@
     organSearchQuery: "",
     quickAddReturnView: null,
     quickAddOrganId: null,
+    quickAddOrganReturnView: null,
+    quickAddOrganCategoryId: null,
     toastTimer: null
   };
 
@@ -49,18 +67,27 @@
   let panel;
   let panelTitle;
   let panelBody;
+  let favoritesBar;
+  let favoritesList;
+  let favoritesLabel;
   let backButton;
   let floatingButton;
   let floatingButtonLabel;
+  let footerCreateActions;
   let quickAddFooterButton;
   let quickAddFooterLabel;
+  let quickAddOrganFooterButton;
+  let quickAddOrganFooterLabel;
   let managerFooterLabel;
   let fabVisibilityButton;
   let fabVisibilityLabel;
   let languageButton;
+  let themeButton;
   let closeButton;
   let toast;
   let resizeFrame = null;
+  let layerFrame = null;
+  let layerObserver = null;
 
   const escapeHtml = (value) => String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -71,6 +98,7 @@
 
   const clamp = (value, minimum, maximum) => Math.min(Math.max(value, minimum), maximum);
   const currentLanguage = () => normalizeLanguage(state.settings.language);
+  const currentTheme = () => state.settings.theme === "dark" ? "dark" : "light";
   const tr = (key, values) => translate(currentLanguage(), key, values);
   const trPlural = (key, count, values) => translatePlural(currentLanguage(), key, count, values);
   const displayCategoryName = (category) => localizeCategoryName(category, currentLanguage());
@@ -102,6 +130,8 @@
     plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
     visibility: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2.8"/></svg>',
     settings: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>',
+    moon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.4 8.4 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z"/></svg>',
+    sun: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     chevron: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>'
   };
 
@@ -160,7 +190,28 @@
   }
 
   function favoriteDescriptions() {
-    return orderedDescriptions(state.descriptions.filter((description) => description.favorite)).slice(0, 4);
+    return orderedDescriptions(state.descriptions.filter((description) => description.favorite));
+  }
+
+  function renderFavoritesBar() {
+    if (!favoritesBar || !favoritesList || !favoritesLabel) return;
+    const favorites = favoriteDescriptions();
+    favoritesBar.hidden = favorites.length === 0;
+    favoritesBar.setAttribute("aria-label", tr("common.favorites"));
+    favoritesLabel.textContent = tr("common.favorites");
+    favoritesList.innerHTML = favorites.map((description) => `
+      <button
+        class="sono-favorite-chip"
+        data-action="copy"
+        data-id="${escapeHtml(description.id)}"
+        type="button"
+        title="${escapeHtml(tr("panel.copyTitle", { title: description.title }))}"
+        aria-label="${escapeHtml(tr("panel.copyTitle", { title: description.title }))}"
+      >
+        <span class="sono-favorite-chip-star">${uiIcons.star}</span>
+        <span class="sono-favorite-chip-title">${escapeHtml(description.title)}</span>
+        <span class="sono-favorite-chip-copy">${uiIcons.copy}</span>
+      </button>`).join("");
   }
 
   function renderQuickRow(description) {
@@ -215,8 +266,9 @@
   }
 
   function renderHome() {
-    const favorites = favoriteDescriptions();
-    const recents = recentDescriptions().filter((recent) => !favorites.some((favorite) => favorite.id === recent.id));
+    const allFavorites = favoriteDescriptions();
+    const favorites = allFavorites.slice(0, 4);
+    const recents = recentDescriptions().filter((recent) => !allFavorites.some((favorite) => favorite.id === recent.id));
     const hasQuickAccess = favorites.length || recents.length;
 
     return `
@@ -319,6 +371,10 @@
             <p>${trPlural("count.organAvailable", organs.length)}</p>
           </div>
         </div>
+        <button class="sono-organ-add-button" data-action="quick-add-organ" data-id="${escapeHtml(category.id)}" type="button">
+          ${uiIcons.plus}
+          <span>${escapeHtml(tr("panel.addOrganTo", { category: categoryName }))}</span>
+        </button>
         ${organs.length ? `
           <div class="sono-organ-list">
             ${organs.map((organ) => renderOrganCard(organ, category)).join("")}
@@ -327,7 +383,6 @@
             <span>${iconSvg(category.icon || "generic", 36)}</span>
             <strong>${tr("panel.noOrganHere")}</strong>
             <p>${tr("panel.addFirstOrgan")}</p>
-            <button class="sono-secondary-button" data-action="manager" type="button">${tr("panel.openManager")}</button>
           </div>`}
       </div>`;
   }
@@ -348,11 +403,15 @@
         <div class="sono-category-hero" style="--accent:#2b7182">
           <span class="sono-category-hero-icon">${iconSvg("library", 32)}</span>
           <div>
-            <span class="sono-eyebrow">typevet</span>
+            <span class="sono-eyebrow">Typevet</span>
             <h3>${tr("common.library")}</h3>
             <p>${trPlural("count.organAvailable", entries.length)}</p>
           </div>
         </div>
+        <button class="sono-organ-add-button" data-action="quick-add-organ" type="button">
+          ${uiIcons.plus}
+          <span>${tr("common.newOrgan")}</span>
+        </button>
         ${entries.length ? `
           <div class="sono-organ-list">
             ${entries.map(({ organ, category }) => renderOrganCard(organ, category)).join("")}
@@ -361,7 +420,6 @@
             <span>${iconSvg("library", 36)}</span>
             <strong>${tr("panel.noOrganInLibrary")}</strong>
             <p>${tr("panel.addFirstOrganLibrary")}</p>
-            <button class="sono-secondary-button" data-action="manager" type="button">${tr("panel.openManager")}</button>
           </div>`}
       </div>`;
   }
@@ -443,6 +501,13 @@
     }).join("");
   }
 
+  function renderCategoryOptions(selectedId) {
+    return [...state.categories]
+      .sort((first, second) => displayCategoryName(first).localeCompare(displayCategoryName(second), currentLanguage()))
+      .map((category) => `<option value="${escapeHtml(category.id)}" ${category.id === selectedId ? "selected" : ""}>${escapeHtml(displayCategoryName(category))}</option>`)
+      .join("");
+  }
+
   function renderQuickAdd() {
     if (!state.organs.length) {
       return `
@@ -450,7 +515,7 @@
           <span>${uiIcons.plus}</span>
           <strong>${tr("panel.createOrganFirst")}</strong>
           <p>${tr("panel.descriptionNeedsOrgan")}</p>
-          <button class="sono-secondary-button" data-action="manager" type="button">${tr("panel.openManager")}</button>
+          <button class="sono-secondary-button" data-action="quick-add-organ" type="button">${tr("common.newOrgan")}</button>
         </div>`;
     }
 
@@ -485,6 +550,44 @@
           <div class="sono-quick-add-actions">
             <button class="sono-form-cancel" data-action="cancel-quick-add" type="button">${tr("common.cancel")}</button>
             <button class="sono-form-save" type="submit">${uiIcons.plus}<span>${tr("common.saveDescription")}</span></button>
+          </div>
+        </form>
+      </div>`;
+  }
+
+  function renderQuickAddOrgan() {
+    if (!state.categories.length) {
+      return `
+        <div class="sono-view sono-empty-state">
+          <span>${uiIcons.plus}</span>
+          <strong>${tr("panel.createCategoryFirst")}</strong>
+          <p>${tr("panel.organNeedsCategory")}</p>
+          <button class="sono-secondary-button" data-action="manager" type="button">${tr("panel.openManager")}</button>
+        </div>`;
+    }
+
+    const selectedCategoryId = categoryById(state.quickAddOrganCategoryId)?.id || state.categories[0].id;
+    return `
+      <div class="sono-view sono-quick-add-view">
+        <div class="sono-quick-add-intro">
+          <span>${uiIcons.plus}</span>
+          <div>
+            <strong>${tr("common.newOrgan")}</strong>
+            <p>${tr("panel.quickOrganIntro")}</p>
+          </div>
+        </div>
+        <form class="sono-quick-add-form" data-role="quick-add-organ-form">
+          <label class="sono-field">
+            <span>${tr("panel.categoryField")}</span>
+            <select name="categoryId" required>${renderCategoryOptions(selectedCategoryId)}</select>
+          </label>
+          <label class="sono-field">
+            <span>${tr("panel.organNameField")}</span>
+            <input name="name" type="text" maxlength="80" placeholder="${tr("panel.organPlaceholder")}" autocomplete="off" required>
+          </label>
+          <div class="sono-quick-add-actions">
+            <button class="sono-form-cancel" data-action="cancel-quick-add-organ" type="button">${tr("common.cancel")}</button>
+            <button class="sono-form-save" type="submit">${uiIcons.plus}<span>${tr("common.saveOrgan")}</span></button>
           </div>
         </form>
       </div>`;
@@ -531,6 +634,54 @@
     return `<div class="sono-empty-state"><strong>${escapeHtml(message)}</strong><button class="sono-secondary-button" data-action="home" type="button">${tr("panel.goHome")}</button></div>`;
   }
 
+  function captureFormDraft() {
+    if (!panelBody) return null;
+    if (state.view.name === "add") {
+      const form = panelBody.querySelector('[data-role="quick-add-form"]');
+      if (!form) return null;
+      return {
+        view: "add",
+        organId: form.querySelector('select[name="organId"]')?.value || "",
+        title: form.querySelector('input[name="title"]')?.value || "",
+        text: form.querySelector('textarea[name="text"]')?.value || "",
+        favorite: Boolean(form.querySelector('input[name="favorite"]')?.checked)
+      };
+    }
+    if (state.view.name === "add-organ") {
+      const form = panelBody.querySelector('[data-role="quick-add-organ-form"]');
+      if (!form) return null;
+      return {
+        view: "add-organ",
+        categoryId: form.querySelector('select[name="categoryId"]')?.value || "",
+        name: form.querySelector('input[name="name"]')?.value || ""
+      };
+    }
+    return null;
+  }
+
+  function restoreFormDraft(draft) {
+    if (!draft || draft.view !== state.view.name || !panelBody) return;
+    if (draft.view === "add") {
+      const form = panelBody.querySelector('[data-role="quick-add-form"]');
+      if (!form) return;
+      const organ = form.querySelector('select[name="organId"]');
+      const title = form.querySelector('input[name="title"]');
+      const text = form.querySelector('textarea[name="text"]');
+      const favorite = form.querySelector('input[name="favorite"]');
+      if (organ && organById(draft.organId)) organ.value = draft.organId;
+      if (title) title.value = draft.title;
+      if (text) text.value = draft.text;
+      if (favorite) favorite.checked = draft.favorite;
+      return;
+    }
+    const form = panelBody.querySelector('[data-role="quick-add-organ-form"]');
+    if (!form) return;
+    const category = form.querySelector('select[name="categoryId"]');
+    const name = form.querySelector('input[name="name"]');
+    if (category && categoryById(draft.categoryId)) category.value = draft.categoryId;
+    if (name) name.value = draft.name;
+  }
+
   function createId(prefix, name) {
     const slug = name.normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -563,6 +714,30 @@
     render();
     panelBody.scrollTop = 0;
     window.setTimeout(() => panelBody.querySelector('input[name="title"]')?.focus({ preventScroll: true }), 40);
+  }
+
+  function preferredQuickAddCategoryId(requestedId) {
+    if (categoryById(requestedId)) return requestedId;
+    if (state.view.name === "category" && categoryById(state.view.categoryId)) return state.view.categoryId;
+    if (state.view.name === "organ") return organById(state.view.organId)?.categoryId || state.categories[0]?.id || null;
+    if (state.view.name === "detail") {
+      const organId = descriptionById(state.view.descriptionId)?.organId;
+      return organById(organId)?.categoryId || state.categories[0]?.id || null;
+    }
+    if (state.view.name === "add" && organById(state.quickAddOrganId)) {
+      return organById(state.quickAddOrganId).categoryId;
+    }
+    return state.categories[0]?.id || null;
+  }
+
+  function openQuickAddOrgan(categoryId) {
+    if (state.view.name === "add-organ") return;
+    state.quickAddOrganReturnView = { ...state.view };
+    state.quickAddOrganCategoryId = preferredQuickAddCategoryId(categoryId);
+    state.view = { name: "add-organ", categoryId: null, organId: null, descriptionId: null };
+    render();
+    panelBody.scrollTop = 0;
+    window.setTimeout(() => panelBody.querySelector('input[name="name"]')?.focus({ preventScroll: true }), 40);
   }
 
   async function saveQuickDescription(event) {
@@ -619,10 +794,75 @@
     }
   }
 
+  async function saveQuickOrgan(event) {
+    event.preventDefault();
+    const form = event.target;
+    if (!form.matches('[data-role="quick-add-organ-form"]')) return;
+
+    const categoryId = form.querySelector('select[name="categoryId"]')?.value || "";
+    const name = form.querySelector('input[name="name"]')?.value.trim() || "";
+    if (!categoryById(categoryId) || !name) {
+      showToast(tr("toast.organRequired"), "error");
+      return;
+    }
+
+    const duplicated = state.organs.some((organ) =>
+      organ.categoryId === categoryId
+      && normalizeSearchText(displayOrganName(organ)) === normalizeSearchText(name));
+    if (duplicated) {
+      showToast(tr("toast.organDuplicate"), "error");
+      return;
+    }
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+    const timestamp = new Date().toISOString();
+    const organ = {
+      id: createId("orgao", name),
+      categoryId,
+      name,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      isSample: false
+    };
+
+    try {
+      state.organs = [...state.organs, organ];
+      await chrome.storage.local.set({ [STORAGE_KEYS.organs]: state.organs });
+      const returnView = state.quickAddOrganReturnView;
+      state.quickAddOrganReturnView = null;
+      state.quickAddOrganCategoryId = null;
+
+      if (returnView?.name === "add") {
+        state.quickAddOrganId = organ.id;
+        state.view = returnView;
+        render();
+        window.setTimeout(() => panelBody.querySelector('input[name="title"]')?.focus({ preventScroll: true }), 40);
+      } else {
+        state.organReturnView = returnView?.name === "library" ? "library" : "category";
+        state.organSearchOrganId = organ.id;
+        state.organSearchQuery = "";
+        state.view = { name: "organ", categoryId: null, organId: organ.id, descriptionId: null };
+        render();
+        panelBody.scrollTop = 0;
+      }
+      showToast(tr("toast.organCreated"));
+    } catch {
+      state.organs = state.organs.filter((item) => item.id !== organ.id);
+      if (submitButton) submitButton.disabled = false;
+      showToast(tr("toast.organSaveFailed"), "error");
+    }
+  }
+
   function render() {
     if (!panelBody) return;
+    const formDraft = captureFormDraft();
 
-    if (state.view.name === "add") {
+    if (state.view.name === "add-organ") {
+      panelTitle.textContent = tr("common.newOrgan");
+      backButton.hidden = false;
+      panelBody.innerHTML = renderQuickAddOrgan();
+    } else if (state.view.name === "add") {
       panelTitle.textContent = tr("common.newDescription");
       backButton.hidden = false;
       panelBody.innerHTML = renderQuickAdd();
@@ -653,7 +893,8 @@
     }
 
     refreshFixedUi();
-    if (quickAddFooterButton) quickAddFooterButton.hidden = state.view.name === "add";
+    restoreFormDraft(formDraft);
+    if (footerCreateActions) footerCreateActions.hidden = state.view.name === "add" || state.view.name === "add-organ";
     if (state.panelOpen) window.requestAnimationFrame(positionPanel);
   }
 
@@ -671,13 +912,19 @@
   function refreshFixedUi() {
     if (!floatingButton) return;
     host.lang = currentLanguage();
+    host.dataset.theme = currentTheme();
     floatingButton.title = tr("panel.fabTitle");
     floatingButton.setAttribute("aria-label", tr("panel.fabAria"));
     floatingButtonLabel.textContent = tr("panel.fabLabel");
     panel.setAttribute("aria-label", tr("panel.dialogAria"));
     backButton.setAttribute("aria-label", tr("common.back"));
     closeButton.setAttribute("aria-label", tr("panel.close"));
-    quickAddFooterLabel.textContent = tr("common.newDescription");
+    quickAddFooterLabel.textContent = tr("common.description");
+    quickAddFooterButton.title = tr("common.newDescription");
+    quickAddFooterButton.setAttribute("aria-label", quickAddFooterButton.title);
+    quickAddOrganFooterLabel.textContent = tr("common.organ");
+    quickAddOrganFooterButton.title = tr("common.newOrgan");
+    quickAddOrganFooterButton.setAttribute("aria-label", quickAddOrganFooterButton.title);
     managerFooterLabel.textContent = tr("common.manage");
     const fabVisible = floatingButtonIsVisible();
     fabVisibilityLabel.textContent = tr(fabVisible ? "panel.hideFab" : "panel.showFab");
@@ -687,6 +934,12 @@
     const languageTitle = tr(currentLanguage() === "en" ? "panel.languageToPortuguese" : "panel.languageToEnglish");
     languageButton.title = languageTitle;
     languageButton.setAttribute("aria-label", languageTitle);
+    const darkTheme = currentTheme() === "dark";
+    const themeTitle = tr(darkTheme ? "panel.themeToLight" : "panel.themeToDark");
+    themeButton.innerHTML = darkTheme ? uiIcons.sun : uiIcons.moon;
+    themeButton.title = themeTitle;
+    themeButton.setAttribute("aria-label", themeTitle);
+    renderFavoritesBar();
   }
 
   async function toggleFloatingButtonVisibility() {
@@ -704,6 +957,14 @@
     render();
     await chrome.storage.local.set({ [STORAGE_KEYS.settings]: state.settings });
     showToast(tr(language === "en" ? "toast.languageEnglish" : "toast.languagePortuguese"));
+  }
+
+  async function toggleTheme() {
+    const theme = currentTheme() === "dark" ? "light" : "dark";
+    state.settings = { ...state.settings, theme };
+    render();
+    await chrome.storage.local.set({ [STORAGE_KEYS.settings]: state.settings });
+    showToast(tr(theme === "dark" ? "toast.themeDark" : "toast.themeLight"));
   }
 
   function getFabBounds() {
@@ -852,6 +1113,7 @@
   }
 
   function setPanelOpen(open) {
+    ensureHostLayer();
     state.panelOpen = open;
     panel.classList.toggle("is-open", open);
     floatingButton.classList.toggle("is-active", open);
@@ -869,7 +1131,11 @@
   }
 
   function goBack() {
-    if (state.view.name === "add") {
+    if (state.view.name === "add-organ") {
+      state.view = state.quickAddOrganReturnView || { name: "home", categoryId: null, organId: null, descriptionId: null };
+      state.quickAddOrganReturnView = null;
+      state.quickAddOrganCategoryId = null;
+    } else if (state.view.name === "add") {
       state.view = state.quickAddReturnView || { name: "home", categoryId: null, organId: null, descriptionId: null };
       state.quickAddReturnView = null;
       state.quickAddOrganId = null;
@@ -999,9 +1265,12 @@
     if (action === "close") return setPanelOpen(false);
     if (action === "back") return goBack();
     if (action === "quick-add") return openQuickAdd(id);
+    if (action === "quick-add-organ") return openQuickAddOrgan(id);
     if (action === "cancel-quick-add") return goBack();
+    if (action === "cancel-quick-add-organ") return goBack();
     if (action === "toggle-fab-visibility") return void toggleFloatingButtonVisibility();
     if (action === "toggle-language") return void toggleLanguage();
+    if (action === "toggle-theme") return void toggleTheme();
     if (action === "home") {
       state.organSearchOrganId = null;
       state.organSearchQuery = "";
@@ -1064,9 +1333,112 @@
     if (event.target.matches('[data-role="organ-search"]')) applyOrganSearchFilter();
   }
 
+  function handleSubmit(event) {
+    if (event.target.matches('[data-role="quick-add-form"]')) return void saveQuickDescription(event);
+    if (event.target.matches('[data-role="quick-add-organ-form"]')) return void saveQuickOrgan(event);
+  }
+
+  function elementIsVisible(element) {
+    if (!(element instanceof HTMLElement) || !element.isConnected) return false;
+    if (element.getAttribute("aria-hidden") === "true") return false;
+    const styles = window.getComputedStyle(element);
+    if (styles.display === "none" || styles.visibility === "hidden" || styles.visibility === "collapse") return false;
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  }
+
+  function modalPriority(element, index) {
+    const styles = window.getComputedStyle(element);
+    const parsedZIndex = Number.parseInt(styles.zIndex, 10);
+    const zIndex = Number.isFinite(parsedZIndex) ? clamp(parsedZIndex, -1000, 2147483) : 0;
+    let semanticPriority = 0;
+    try {
+      if (element.matches(":modal")) semanticPriority = 1000;
+    } catch {
+      // Browsers without :modal are handled by the selectors below.
+    }
+    if (!semanticPriority && element.matches("dialog[open]")) semanticPriority = 950;
+    else if (element.getAttribute("aria-modal") === "true") semanticPriority = 900;
+    else if (element.matches(".modal.show, .modal.in")) semanticPriority = 850;
+    else if (element.matches("ngb-modal-window, mat-dialog-container, .mat-mdc-dialog-container, .cdk-overlay-pane[role='dialog'], .p-dialog, .MuiModal-root, .offcanvas.show, .ReactModal__Content--after-open, [data-radix-dialog-content]")) semanticPriority = 800;
+    else if (element.getAttribute("role") === "dialog") semanticPriority = 650;
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement !== host && element.contains(activeElement)) semanticPriority += 2000;
+    return (zIndex * 10000) + semanticPriority + index;
+  }
+
+  function activeModalDialog() {
+    const candidates = [...document.querySelectorAll(MODAL_SELECTOR)].filter(elementIsVisible);
+    if (!candidates.length) return null;
+    return candidates
+      .map((element, index) => ({ element, score: modalPriority(element, index) }))
+      .sort((first, second) => second.score - first.score)[0].element;
+  }
+
+  function preferredHostParent() {
+    return activeModalDialog() || document.fullscreenElement || document.documentElement;
+  }
+
+  function applyHostPriorityStyles() {
+    const importantStyles = {
+      position: "fixed",
+      inset: "0",
+      display: "block",
+      width: "100vw",
+      height: "100vh",
+      margin: "0",
+      padding: "0",
+      border: "0",
+      opacity: "1",
+      visibility: "visible",
+      transform: "none",
+      "clip-path": "none",
+      "pointer-events": "none",
+      "z-index": "2147483647",
+      isolation: "isolate"
+    };
+    for (const [property, value] of Object.entries(importantStyles)) {
+      host.style.setProperty(property, value, "important");
+    }
+  }
+
+  function ensureHostLayer() {
+    if (!host) return;
+    const parent = preferredHostParent();
+    if (host.parentNode !== parent) parent.appendChild(host);
+    applyHostPriorityStyles();
+  }
+
+  function scheduleHostLayerRefresh() {
+    window.cancelAnimationFrame(layerFrame);
+    layerFrame = window.requestAnimationFrame(() => {
+      ensureHostLayer();
+      if (state.panelOpen) positionPanel();
+    });
+  }
+
+  function handleLayerMutations(records) {
+    const pageLayerChanged = records.some((record) => {
+      if (record.type === "attributes") {
+        return record.target !== host
+          && (record.target.matches?.(MODAL_SELECTOR) || record.target.contains?.(host));
+      }
+      return [...record.addedNodes, ...record.removedNodes].some((node) => {
+        if (!(node instanceof Element) || node === host) return false;
+        return node.contains(host) || node.matches(MODAL_SELECTOR) || Boolean(node.querySelector(MODAL_SELECTOR));
+      });
+    });
+    if (pageLayerChanged) scheduleHostLayerRefresh();
+  }
+
+  function protectEventsFromHostPage(event) {
+    event.stopPropagation();
+  }
+
   async function createUi() {
     host = document.createElement("div");
     host.id = ROOT_ID;
+    applyHostPriorityStyles();
     shadow = host.attachShadow({ mode: "open" });
 
     const cssText = injectedCssText
@@ -1088,46 +1460,92 @@
             <span class="sono-brand-mark" aria-hidden="true">
               <svg viewBox="0 0 36 36"><path d="M9 21c3-8 6-12 9-12s6 4 9 12"/><path d="M12.5 22c2-5 3.8-7 5.5-7s3.5 2 5.5 7"/><path d="M10 26h16"/></svg>
             </span>
-            <span><small>typevet</small><strong class="sono-panel-title">Descrições</strong></span>
+            <span><small>Typevet</small><strong class="sono-panel-title">Descrições</strong></span>
           </div>
           <button class="sono-language-button" data-action="toggle-language" type="button" aria-label="Mudar interface para inglês" title="Mudar interface para inglês">PT</button>
+          <button class="sono-theme-button" data-action="toggle-theme" type="button" aria-label="Ativar modo escuro" title="Ativar modo escuro">${uiIcons.moon}</button>
           <button class="sono-header-button" data-action="close" type="button" aria-label="Fechar painel">${uiIcons.close}</button>
         </header>
+        <nav class="sono-favorites-bar" data-role="favorites-bar" aria-label="Favoritas" hidden>
+          <span class="sono-favorites-label">
+            ${uiIcons.star}
+            <span data-role="favorites-label">Favoritas</span>
+          </span>
+          <div class="sono-favorites-list" data-role="favorites-list"></div>
+        </nav>
         <main class="sono-panel-body"></main>
         <footer class="sono-panel-footer">
-          <button class="sono-footer-add" data-action="quick-add" data-role="quick-add-footer" type="button">${uiIcons.plus}<span>Nova descrição</span></button>
+          <div class="sono-footer-create" data-role="footer-create">
+            <button class="sono-footer-add" data-action="quick-add" data-role="quick-add-footer" type="button">${uiIcons.plus}<span>Descrição</span></button>
+            <button class="sono-footer-add sono-footer-organ" data-action="quick-add-organ" data-role="quick-add-organ-footer" type="button">${uiIcons.plus}<span>Órgão</span></button>
+          </div>
           <button data-action="toggle-fab-visibility" data-role="fab-visibility" type="button">${uiIcons.visibility}<span>Desativar botão</span></button>
           <button data-action="manager" type="button">${uiIcons.settings}<span>Gerenciar</span></button>
         </footer>
       </section>
       <div class="sono-toast" role="status" aria-live="polite"></div>`;
 
-    document.documentElement.appendChild(host);
+    ensureHostLayer();
     panel = shadow.querySelector(".sono-panel");
     panelTitle = shadow.querySelector(".sono-panel-title");
     panelBody = shadow.querySelector(".sono-panel-body");
+    favoritesBar = shadow.querySelector('[data-role="favorites-bar"]');
+    favoritesList = shadow.querySelector('[data-role="favorites-list"]');
+    favoritesLabel = shadow.querySelector('[data-role="favorites-label"]');
     backButton = shadow.querySelector(".sono-back-button");
     floatingButton = shadow.querySelector(".sono-fab");
     floatingButtonLabel = shadow.querySelector(".sono-fab-label");
+    footerCreateActions = shadow.querySelector('[data-role="footer-create"]');
     quickAddFooterButton = shadow.querySelector('[data-role="quick-add-footer"]');
     quickAddFooterLabel = quickAddFooterButton.querySelector("span");
+    quickAddOrganFooterButton = shadow.querySelector('[data-role="quick-add-organ-footer"]');
+    quickAddOrganFooterLabel = quickAddOrganFooterButton.querySelector("span");
     managerFooterLabel = shadow.querySelector('[data-action="manager"] span');
     fabVisibilityButton = shadow.querySelector('[data-role="fab-visibility"]');
     fabVisibilityLabel = fabVisibilityButton.querySelector("span");
     languageButton = shadow.querySelector(".sono-language-button");
+    themeButton = shadow.querySelector(".sono-theme-button");
     closeButton = shadow.querySelector('[data-action="close"]');
     toast = shadow.querySelector(".sono-toast");
 
     shadow.addEventListener("click", handleClick);
     shadow.addEventListener("keydown", handleKeydown);
     shadow.addEventListener("input", handleInput);
-    shadow.addEventListener("submit", (event) => void saveQuickDescription(event));
+    shadow.addEventListener("submit", handleSubmit);
+    for (const eventName of [
+      "click",
+      "dblclick",
+      "pointerdown",
+      "pointerup",
+      "pointermove",
+      "mousedown",
+      "mouseup",
+      "keydown",
+      "keyup",
+      "keypress",
+      "input",
+      "change",
+      "submit",
+      "focusin",
+      "focusout",
+      "wheel"
+    ]) {
+      shadow.addEventListener(eventName, protectEventsFromHostPage);
+    }
     floatingButton.addEventListener("pointerdown", handleFabPointerDown);
     floatingButton.addEventListener("pointermove", handleFabPointerMove);
     floatingButton.addEventListener("pointerup", finishFabDrag);
     floatingButton.addEventListener("pointercancel", finishFabDrag);
     floatingButton.addEventListener("lostpointercapture", finishFabDrag);
     window.addEventListener("resize", handleViewportResize, { passive: true });
+    document.addEventListener("fullscreenchange", scheduleHostLayerRefresh);
+    layerObserver = new MutationObserver(handleLayerMutations);
+    layerObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["open", "class", "style", "aria-hidden", "aria-modal"],
+      childList: true,
+      subtree: true
+    });
     applyFloatingButtonVisibility();
     render();
     if (openPanelRequested) {
